@@ -11,4 +11,6 @@ export PGPASSWORD=woofwoof
 export PGUSER=mastodon_admin
 #
 psql < load_log.psql
+psql < row_header.psql
+psql < bin_sample.psql
 #
