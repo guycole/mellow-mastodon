@@ -4,9 +4,6 @@
 # Development Environment: Ubuntu 22.04.5 LTS/python 3.10.12
 # Author: G.S. Cole (guycole at gmail dot com)
 #
-# import sqlalchemy
-# from sqlalchemy import and_
-# from sqlalchemy import select
 
 import datetime
 import time
@@ -17,7 +14,7 @@ from sqlalchemy import func
 from sqlalchemy import select
 
 from sql_table import (
-    LoadLog,
+    BinSample, LoadLog, RowHeader
 )
 
 class PostGres:
@@ -26,15 +23,23 @@ class PostGres:
 
     def __init__(self, session: sqlalchemy.orm.session.sessionmaker):
         self.Session = session
+        
+    def bin_sample_insert(self, args: dict[str, any]) -> BinSample:
+        candidate = BinSample(args)
 
-    def load_log_insert(
-        self, args: dict[str, any], obs_quantity: int, geo_loc_id: int
-    ) -> LoadLog:
-        args["duration_ms"] = 0
-        args["file_date"] = args["file_time"].date()
-        args["obs_quantity"] = obs_quantity
+        try:
+            with self.Session() as session:
+                session.add(candidate)
+                session.commit()
+        except Exception as error:
+            print(error)
 
-        candidate = LoadLog(args, geo_loc_id)
+        return candidate
+    
+    def load_log_insert(self, args: dict[str, any]) -> LoadLog:
+        args["obs_date"] = args["obs_time"].date()
+
+        candidate = LoadLog(args)
 
         try:
             with self.Session() as session:
@@ -45,19 +50,29 @@ class PostGres:
 
         return candidate
 
-    def load_log_select_all(self) -> list[LoadLog]:
-        with self.Session() as session:
-            return session.scalars(select(LoadLog)).all()
+#    def load_log_select_all(self) -> list[LoadLog]:
+#        with self.Session() as session:
+#            return session.scalars(select(LoadLog)).all()
 
     def load_log_select_by_file_name(self, file_name: str) -> LoadLog:
         with self.Session() as session:
-            return session.scalars(
-                select(LoadLog).filter_by(file_name=file_name)
-            ).first()
+            return session.scalars(select(LoadLog).filter_by(file_name=file_name)).first()
 
-    def load_log_select_by_file_date(self, target: datetime) -> list[LoadLog]:
-        with self.Session() as session:
-            return session.scalars(select(LoadLog).filter_by(file_date=target)).all()
+#    def load_log_select_by_file_date(self, target: datetime) -> list[LoadLog]:
+#        with self.Session() as session:
+#            return session.scalars(select(LoadLog).filter_by(file_date=target)).all()
+
+    def row_header_insert(self, args: dict[str, any]) -> RowHeader:
+        candidate = RowHeader(args)
+
+        try:
+            with self.Session() as session:
+                session.add(candidate)
+                session.commit()
+        except Exception as error:
+            print(error)
+
+        return candidate
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***

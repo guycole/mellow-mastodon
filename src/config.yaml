@@ -12,8 +12,9 @@ freshDir: /var/mellow/mastodon/fresh
 testDir: /var/mellow/mastodon/test
 #
 # database connection
-dbConn: "postgresql+psycopg2://mastodon_py:bogus@localhost:5432/mastodon_v1"
+dbConn: "postgresql+psycopg2://mastodon_client:batabat@localhost:5432/mastodon"
 #
 # true, echo SQL statements
-sqlEchoEnable: true
+#sqlEchoEnable: true
+sqlEchoEnable: false
 #

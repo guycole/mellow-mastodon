@@ -17,12 +17,6 @@ import postgres
 
 from converter import Converter
 
-class Eclectic:
-
-    def __init__(self, file_name: str, postgres: postgres.PostGres):
-        self.file_name = file_name
-        self.postgres = postgres
-
 class Loader:
 
     def __init__(self, configuration: dict[str, str]):
@@ -32,14 +26,14 @@ class Loader:
         self.fresh_dir = configuration["freshDir"]
         self.sql_echo = configuration["sqlEchoEnable"]
 
-        connect_dict = {"options": "-csearch_path={}".format("heeler_v1")}
-#        db_engine = create_engine(
-#            self.db_conn, echo=self.sql_echo, connect_args=connect_dict
-#        )
+        connect_dict = {"options": "-csearch_path={}".format("mastodon_v1")}
+        db_engine = create_engine(
+            self.db_conn, echo=self.sql_echo, connect_args=connect_dict
+        )
 
-#        self.postgres = postgres.PostGres(
-#            sessionmaker(bind=db_engine, expire_on_commit=False)
-#        )
+        self.postgres = postgres.PostGres(
+            sessionmaker(bind=db_engine, expire_on_commit=False)
+        )
 
         self.failure_counter = 0
         self.success_counter = 0
@@ -66,29 +60,38 @@ class Loader:
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
 
-        converter = Converter()
-
         for target in targets:
+            print(f"processing {target}")
+            
             if os.path.isfile(target) is False:
                 continue
 
+            # test for duplicate file
+            selected = self.postgres.load_log_select_by_file_name(target)
+            if selected is not None:
+                print(f"skip duplicate file:{target}")
+                self.file_failure(target)
+                continue
+
+            # process file
+            converter = Converter()
             if converter.converter(target) is False:
                 print(f"converter failure noted:{target}")
                 self.file_failure(target)
                 continue
 
-            # test for duplicate file
-#            selected = self.postgres.load_log_select_by_file_name(target)
-#            if selected is not None:
-#                print(f"skip duplicate file:{target}")
-#                self.file_failure(target)
-#                continue
+            load_log = self.postgres.load_log_insert(converter.get_load_log())
 
+            converted = converter.get_converted()
+            for row in converted["rows"]:
+                rh = converter.get_row_header(row, load_log.id)
+                row_header = self.postgres.row_header_insert(rh)
 
-#            if result_flag is True:
-#                self.file_success(target)
-#            else:
-#                self.file_failure(target)
+                for element in row["elements"]:
+                    bs = converter.get_bin_sample(element, row_header.id)
+                    bin_sample = self.postgres.bin_sample_insert(bs)
+
+            self.file_success(target)
 
         print(f"success:{self.success_counter} failure:{self.failure_counter}")
 
