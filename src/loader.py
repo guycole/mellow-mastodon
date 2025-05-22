@@ -43,7 +43,7 @@ class Loader:
 
         self.success_counter += 1
 
-#        os.rename(file_name, self.archive_dir + "/" + file_name)
+        os.rename(file_name, self.archive_dir + "/" + file_name)
 
     def file_failure(self, file_name: str):
         """problem file, retain for review"""
@@ -51,7 +51,7 @@ class Loader:
         self.failure_counter += 1
 
         print(f"failure move for {file_name}")
-#        os.rename(file_name, self.failure_dir + "/" + file_name)
+        os.rename(file_name, self.failure_dir + "/" + file_name)
 
     def execute(self) -> None:
         print(f"fresh dir:{self.fresh_dir}")
@@ -81,6 +81,7 @@ class Loader:
                 continue
 
             load_log = self.postgres.load_log_insert(converter.get_load_log())
+            print(f"loading {target}")
 
             converted = converter.get_converted()
             for row in converted["rows"]:
