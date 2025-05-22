@@ -1,0 +1,24 @@
+--
+-- Title: load_log.psql
+-- Description: file load history
+--
+create table mastodon_v1.load_log (
+  id             bigserial    primary key,
+  file_name      varchar(64)  unique not null,
+  file_type      varchar(16)  not null,
+  freq_mhz_low   int          not null,
+  freq_mhz_high  int          not null,
+  obs_date       date         not null default CURRENT_DATE,
+  obs_time       timestamp    not null default CURRENT_TIMESTAMP,
+  project        varchar(16)  not null,
+  site           varchar(16)  not null
+) tablespace mastodon;
+
+--insert into mastodon_v1.load_log(file_name, file_type, freq_mhz_low, freq_mhz_high, platform, project, site) values('pytest', 'pytest', 1, 5, 'pytest', 'pytest', 'pytest');
+
+grant select, insert, update, delete on mastodon_v1.load_log to mastodon_client;
+grant usage, select on sequence mastodon_v1.load_log_id_seq to mastodon_client;
+
+create index load_log_obs_date on mastodon_v1.load_log(obs_date);
+
+create unique index load_log_time_project_site on mastodon_v1.load_log(obs_time, project, site);
