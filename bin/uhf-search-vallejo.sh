@@ -20,7 +20,7 @@ SCRIPT_NAME=$0
 TODAY=$(date '+%Y-%m-%d')
 UUID=$(uuidgen)
 #
-FILE_NAME="big-search-${UUID}.${SITE_NAME}"
+FILE_NAME="uhf-search-${UUID}.${SITE_NAME}"
 #
 rtl_power -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION /var/mellow/mastodon/fresh/$FILE_NAME 
 #
