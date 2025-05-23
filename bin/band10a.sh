@@ -14,10 +14,11 @@ FREQ_HIGHER=108M
 REPORT=25
 #
 HOST_NAME=$(hostname)
+SITE_NAME="vallejo1"
 SCRIPT_NAME=$0
 UUID=$(uuidgen)
 #
-FILE_NAME="band10a-${UUID}.sfo1"
+FILE_NAME="band10a-${UUID}.${SITE_NAME}"
 #
 rtl_power -f $FREQ_LOWER:$FREQ_HIGHER:$BIN_SIZE -e $DURATION -i $REPORT /var/mellow/mastodon/fresh/$FILE_NAME 
 #
