@@ -8,11 +8,11 @@
 PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
 #
 BIN_SIZE=5k
-DURATION=7m
+DURATION=57m
 #DURATION=5m
 FREQ_LOW=88M
 FREQ_HIGH=512M
-REPORT=11m
+REPORT=7m
 #
 HOST_NAME=$(hostname)
 SITE_NAME="vallejo1"
