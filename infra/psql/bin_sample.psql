@@ -1,17 +1,17 @@
 --
 -- Title: bin_sample.psql
--- Description: 
+-- Description: bin value
 --
 create table mastodon_v1.bin_sample (
   id          bigserial  primary key,
   bin_ndx     smallint   not null,
   freq_hz     int        not null,
-  parent_id   bigint     not null,
-  constraint  parent_id  foreign key(parent_id) references mastodon_v1.row_header(id),
+  row_id      bigint     not null,
+  constraint  row_id     foreign key(row_id) references mastodon_v1.row_header(id),
   signal_dbm  real       not null
 ) tablespace mastodon;
 
 grant select, insert, update, delete on mastodon_v1.bin_sample to mastodon_client;
 grant usage, select on sequence mastodon_v1.bin_sample_id_seq to mastodon_client;
 
-create unique index ndx_freq_parent on mastodon_v1.bin_sample(bin_ndx, freq_hz, parent_id);
+create unique index bin_freq_row on mastodon_v1.bin_sample(bin_ndx, freq_hz, row_id);

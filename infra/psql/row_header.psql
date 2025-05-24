@@ -1,6 +1,6 @@
 --
 -- Title: row_header.psql
--- Description: 
+-- Description: row metadata
 --
 create table mastodon_v1.row_header (
   id               bigserial    primary key,
@@ -10,13 +10,12 @@ create table mastodon_v1.row_header (
   freq_hz_step     real         not null,
   load_log_id      bigint       not null,
   constraint       load_log_id  foreign key(load_log_id) references mastodon_v1.load_log(id),
-  obs_time         timestamp    not null default CURRENT_TIMESTAMP,
+  row_date         date         not null default CURRENT_DATE,
+  row_time         timestamp    not null default CURRENT_TIMESTAMP,
   sample_quantity  smallint     not null
 ) tablespace mastodon;
 
 grant select, insert, update, delete on mastodon_v1.row_header to mastodon_client;
 grant usage, select on sequence mastodon_v1.row_header_id_seq to mastodon_client;
 
---create index load_log_obs_date on hyena_v1.load_log(obs_date);
-
---create unique index load_log_time_platform_project_site on hyena_v1.load_log(obs_time, platform, project, site_id);
+create index row_header_date on mastodon_v1.row_header(row_date);
