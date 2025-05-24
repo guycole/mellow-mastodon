@@ -57,7 +57,7 @@ class Converter:
             "freq_step": float(row[4]),
             "sample_quantity": int(row[5]),
             "time_stamp": datetime.datetime(yy, mm, dd, hour, minute, second),
-            "elements": []
+            "bin_samples": []
         }
 
         return results
@@ -67,13 +67,21 @@ class Converter:
 
         current_freq = row_meta["freq_low"]
         for ndx in range(6, len(row)):
-            element = (ndx, float(row[ndx]), current_freq)
-            row_meta["elements"].append(element)
+            # iterate for each bin and convert to sql_table.BinSample dictionary
+            bin_sample = {
+                "bin_ndx": ndx, # note origin is six not zero
+                "freq_hz": current_freq,
+                "row_id": 0,
+                "signal_dbm": float(row[ndx])
+            }
+
+            row_meta["bin_samples"].append(bin_sample)
+
             current_freq += row_meta["freq_step"]
 
         return row_meta
 
-    def file_reader(self, file_name: str) -> bool:
+    def csv_file_reader(self, file_name: str) -> bool:
         try:
             with open(file_name, "r") as in_file:
                 csv_file = csv.reader(in_file)
@@ -100,17 +108,18 @@ class Converter:
         freq_low = sys.maxsize
         freq_high = 0
 
+        # discover min max freq
         for row in self.converted["rows"]:
-            for element in row["elements"]:
-                freq_low = min(freq_low, element[2])
-                freq_high = max(freq_high, element[2])
+            for element in row["bin_samples"]:
+                freq_low = min(freq_low, element["freq_hz"])
+                freq_high = max(freq_high, element["freq_hz"])
 
         return {
             "file_name": self.converted["file_name"],
             "file_type": "mastodon_v1",
             "freq_mhz_low": round(freq_low),
             "freq_mhz_high": round(freq_high),
-            "obs_time": time_stamp,
+            "first_row_time": time_stamp,
             "project": self.converted["project"],
             "site": self.converted["site"],
         }
@@ -125,23 +134,27 @@ class Converter:
 
     def get_row_header(self, args: dict[str, any], load_log_id: int) -> RowHeader:
         return {
-            "bin_quantity": len(args["elements"]),
+            "bin_quantity": len(args["bin_samples"]),
             "freq_hz_low": args["freq_low"],
             "freq_hz_high": args["freq_high"],
             "freq_hz_step": args["freq_step"],
             "load_log_id": load_log_id,
-            "obs_time": args["time_stamp"],
+            "row_time": args["time_stamp"],
             "sample_quantity": args["sample_quantity"]
         }
 
     def converter(self, file_name: str) -> bool:
+        """ main entry point """
+
         if self.parse_file_name(file_name) is False:
             print("file name parse failure")
             return False
-        
-        if self.file_reader(file_name) is False:
+
+        if self.csv_file_reader(file_name) is False:
             print("file reader failure")
             return False
+
+        print(f"rows converted {len(self.converted['rows'])}")
 
         return True
 

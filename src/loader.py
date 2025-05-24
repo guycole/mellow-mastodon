@@ -64,6 +64,7 @@ class Loader:
             print(f"processing {target}")
             
             if os.path.isfile(target) is False:
+                print(f"skipping {target}")
                 continue
 
             # test for duplicate file
@@ -81,16 +82,14 @@ class Loader:
                 continue
 
             load_log = self.postgres.load_log_insert(converter.get_load_log())
-            print(f"loading {target}")
+            print(f"load_log {target}")
 
             converted = converter.get_converted()
             for row in converted["rows"]:
                 rh = converter.get_row_header(row, load_log.id)
                 row_header = self.postgres.row_header_insert(rh)
 
-                for element in row["elements"]:
-                    bs = converter.get_bin_sample(element, row_header.id)
-                    bin_sample = self.postgres.bin_sample_insert(bs)
+                self.postgres.bin_sample_bulk_insert(row["bin_samples"], row_header.id)
 
             self.file_success(target)
 

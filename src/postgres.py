@@ -35,9 +35,20 @@ class PostGres:
             print(error)
 
         return candidate
-    
+
+    def bin_sample_bulk_insert(self, bin_samples: list[dict[str, any]], row_id: int) -> None:
+        for sample in bin_samples:
+            sample["row_id"] = row_id
+
+        try:
+            with self.Session() as session:
+                session.bulk_insert_mappings(BinSample, bin_samples)
+                session.commit()
+        except Exception as error:
+            print(error)
+
     def load_log_insert(self, args: dict[str, any]) -> LoadLog:
-        args["obs_date"] = args["obs_time"].date()
+        args["first_row_date"] = args["first_row_time"].date()
 
         candidate = LoadLog(args)
 
@@ -63,6 +74,8 @@ class PostGres:
 #            return session.scalars(select(LoadLog).filter_by(file_date=target)).all()
 
     def row_header_insert(self, args: dict[str, any]) -> RowHeader:
+        args["row_date"] = args["row_time"].date()
+        
         candidate = RowHeader(args)
 
         try:
