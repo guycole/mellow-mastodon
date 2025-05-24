@@ -140,7 +140,7 @@ class Converter:
             return False
         
         if self.file_reader(file_name) is False:
-            print("file name parse failure")
+            print("file reader failure")
             return False
 
         return True
