@@ -65,14 +65,25 @@ class Converter:
     def process_row(self, row: list[str]) -> dict[str, any]:
         row_meta = self.process_row_meta(row[0:6])
 
+        #rolling_mean_values = [0]*7
+        rolling_mean_values = [0]*17
+
         current_freq = row_meta["freq_low"]
         for ndx in range(6, len(row)):
+            bin_value = float(row[ndx])
+
+            rolling_mean_values.pop(0)
+            rolling_mean_values.append(bin_value)
+            mean_value = sum(rolling_mean_values)/len(rolling_mean_values)
+            
             # iterate for each bin and convert to sql_table.BinSample dictionary
             bin_sample = {
                 "bin_ndx": ndx, # note origin is six not zero
                 "freq_hz": current_freq,
-                "row_id": 0,
-                "signal_dbm": float(row[ndx])
+                "peaker_flag": True if bin_value > mean_value else False,
+                "rolling_mean": mean_value,
+                "row_head_id": 0,
+                "signal_dbm": bin_value
             }
 
             row_meta["bin_samples"].append(bin_sample)

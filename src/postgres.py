@@ -36,9 +36,9 @@ class PostGres:
 
         return candidate
 
-    def bin_sample_bulk_insert(self, bin_samples: list[dict[str, any]], row_id: int) -> None:
+    def bin_sample_bulk_insert(self, bin_samples: list[dict[str, any]], row_head_id: int) -> None:
         for sample in bin_samples:
-            sample["row_id"] = row_id
+            sample["row_head_id"] = row_head_id
 
         try:
             with self.Session() as session:
