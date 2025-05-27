@@ -7,6 +7,6 @@ set grid
 set terminal png size 1200,800
 set output 'bin-sample2.png'
 set key outside
-plot for [col=2:3] 'bin-sample2.dat' using 1:col 
+plot for [col=2:3] 'bin-sample2.dat' using 1:col
 #plot 'bin-sample2.dat'
 #
