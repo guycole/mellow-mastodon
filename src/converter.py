@@ -65,19 +65,49 @@ class Converter:
     def process_row(self, row: list[str]) -> dict[str, any]:
         row_meta = self.process_row_meta(row[0:6])
 
+        mean_array_length = 63
+        rolling_mean_values = [-23]*mean_array_length
+
         current_freq = row_meta["freq_low"]
         for ndx in range(6, len(row)):
+            bin_value = float(row[ndx])
+
+            rolling_mean_values.pop(0)
+            rolling_mean_values.append(bin_value)
+
+            mean_value = sum(rolling_mean_values)/mean_array_length
+            peaker_flag = True if abs(bin_value) > abs(mean_value)  else False
+            
             # iterate for each bin and convert to sql_table.BinSample dictionary
             bin_sample = {
                 "bin_ndx": ndx, # note origin is six not zero
                 "freq_hz": current_freq,
-                "row_id": 0,
-                "signal_dbm": float(row[ndx])
+                "peaker_flag": peaker_flag,
+                "rolling_mean": mean_value,
+                "row_head_id": 0,
+                "signal_dbm": bin_value
             }
 
             row_meta["bin_samples"].append(bin_sample)
 
             current_freq += row_meta["freq_step"]
+
+        # shift moving average (to fix lagging value)
+#        bin_samples = row_meta["bin_samples"]
+#        lag_ndx = 0
+
+#        for lead_ndx in range(mean_array_length//2, len(bin_samples)):
+#            leading = bin_samples[lead_ndx]
+#            lagging = bin_samples[lag_ndx]
+
+#            lagging["rolling_mean"] = leading["rolling_mean"]
+
+#            bin_value = lagging["signal_dbm"]
+#            threshold_value = abs(lagging["rolling_mean"]) * 1.11
+ 
+#            lagging["peaker_flag"] = True if abs(bin_value) > threshold_value else False
+
+#            lag_ndx += 1
 
         return row_meta
 

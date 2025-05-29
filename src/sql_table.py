@@ -31,13 +31,17 @@ class BinSample(Base):
     id = Column(Integer, primary_key=True)
     bin_ndx = Column(Integer)
     freq_hz = Column(Integer)
-    row_id = Column(BigInteger)
+    peaker_flag = Column(Boolean)
+    rolling_mean = Column(Float)
+    row_head_id = Column(BigInteger)
     signal_dbm = Column(Float)
 
     def __init__(self, args: dict[str, any]):
         self.bin_ndx = args["bin_ndx"]
         self.freq_hz = args["freq_hz"]
-        self.row_id = args["row_id"]
+        self.peaker_flag = args["peaker_flag"]
+        self.rolling_mean = args["rolling_mean"]
+        self.row_head_id = args["row_head_id"]
         self.signal_dbm = args["signal_dbm"]
 
     def __repr__(self):
