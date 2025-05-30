@@ -4,6 +4,7 @@
 # Development Environment: Ubuntu 22.04.5 LTS/python 3.10.12
 # Author: G.S. Cole (guycole at gmail dot com)
 #
+import datetime
 import os
 import sys
 
@@ -81,17 +82,31 @@ class Loader:
                 self.file_failure(target)
                 continue
 
+            start_time_stamp = datetime.datetime.now()
+
             load_log = self.postgres.load_log_insert(converter.get_load_log())
             print(f"load_log {target}")
 
             converted = converter.get_converted()
+            counter = 1
             for row in converted["rows"]:
+                #                print(".", end=" ", flush=True)
+
+                print(f"{counter}", end='\r')
+                counter += 1
+                
                 rh = converter.get_row_header(row, load_log.id)
                 row_header = self.postgres.row_header_insert(rh)
 
                 self.postgres.bin_sample_bulk_insert(row["bin_samples"], row_header.id)
 
+            print("")
+
             self.file_success(target)
+
+            stop_time_stamp = datetime.datetime.now()
+            duration = stop_time_stamp - start_time_stamp
+            print(f"duration {duration.seconds} seconds")
 
         print(f"success:{self.success_counter} failure:{self.failure_counter}")
 
