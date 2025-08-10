@@ -2,6 +2,9 @@
 # repository of processed observations
 archiveDir: /var/mellow/mastodon/archive
 #
+# repository of converted observations
+cookedDir: /var/mellow/mastodon/cooked
+#
 # repository of problem files
 failureDir: /var/mellow/mastodon/failure
 #
