@@ -5,9 +5,6 @@
 # Author: G.S. Cole (guycole at gmail dot com)
 #
 import csv
-import datetime
-import os
-import sys
 
 class MastodonHelper:
 

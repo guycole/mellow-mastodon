@@ -10,6 +10,9 @@ PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
 DEST_BUCKET=s3://mellow-mastodon-uw2-m7766.braingang.net/fresh/
 #
 echo "start move"
-cd /var/mellow/mastodon/fresh; gzip *
+cd /var/mellow/mastodon/archive
+rm *.gp
+gzip *.json
 aws s3 mv . $DEST_BUCKET --recursive --profile=wombat04
 echo "end move"
+#

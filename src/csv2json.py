@@ -6,13 +6,9 @@
 #
 
 import csv
-import datetime
 import json
 import os
 import sys
-import time
-from unittest import result
-import uuid
 
 import yaml
 from yaml.loader import SafeLoader
@@ -34,7 +30,7 @@ class CsvJson:
         project = payload.json_bag['project']
         site = payload.json_bag['site']
 
-        return f"{self.cooked_dir}/{bin_seconds}-{freq_low_hz}-{project}.{site}"
+        return f"{self.archive_dir}/{bin_seconds}-{freq_low_hz}-{project}.{site}"
 
     def json_writer(self, payload: MastodonRow) -> None:
         file_name = f"{self.file_name(payload)}.json"
@@ -86,7 +82,7 @@ class CsvJson:
 
             self.csv_file_converter(target)
 
-            os.rename(target, self.archive_dir + "/" + target)
+            os.rename(target, self.cooked_dir + "/" + target)
 
 print("start csv2json")#
 
