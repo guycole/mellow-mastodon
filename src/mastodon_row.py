@@ -10,7 +10,7 @@ import os
 import sys
 
 class MastodonRow:
-    header = {}
+    json_bag = {}
 
     def __init__(self, file_name: str):
         # file name has form project-uuid.site 
@@ -24,7 +24,7 @@ class MastodonRow:
         if len(tokens[0]) < min_size:
             raise Exception("bad token 0 len") 
 
-        self.header = {
+        self.json_bag = {
             "file_name": file_name,
             "file_type": "mastodon_v1",
             "project": tokens[0][:-37],
@@ -35,10 +35,10 @@ class MastodonRow:
         }
 
     def __str__(self):
-        return f"self.header = {self.header['file_name']}"
+        return f"self.json_bag = {self.json_bag['file_name']}"
     
     def row_energy(self) -> None:
-        print(self.header)
+        print(self.json_bag)
 
     def row_meta(self, row: list[str]) -> None:
         # ['2025-05-16', ' 04:16:20', ' 966482608', ' 969275710', ' 2727.64']
@@ -57,53 +57,88 @@ class MastodonRow:
         minute = int(row_time[1])
         second = int(row_time[2])
 
-        self.header['meta'] = {
+        dt = datetime.datetime(yy, mm, dd, hour, minute, second)
+
+        self.json_bag['meta'] = {
             "freq_low_hz": int(row[2]),
             "freq_high_hz": int(row[3]),
             "freq_step_hz": float(row[4]),
             "sample_quantity": int(row[5]),
-            "time_stamp_dt": datetime.datetime(yy, mm, dd, hour, minute, second),
-            "time_stamp_epoch": int(datetime.datetime(yy, mm, dd, hour, minute, second).timestamp()),
-            "time_stamp_iso8601": datetime.datetime(yy, mm, dd, hour, minute, second).isoformat()
+            "time_stamp_dt": dt,
+            "time_stamp_epoch": int(dt.timestamp()),
+            "time_stamp_iso8601": dt.isoformat()
         }
 
     def row_samples(self, row: list[str]) -> None:
-        # dbm values
+        # dbm values and peakers
 
         if len(row) < 6:
             raise Exception("bad row len")
-
-        samples = []
-        current_frequency = self.header['meta']['freq_low_hz']
-        step_frequency = self.header['meta']['freq_step_hz']
+        
+        # pass1 convert from string to float and discover basic row stats
 
         avg_sample = 0
         min_sample = 0
         max_sample = -100
         total_samples = 0
 
-        for ndx in range(6, len(row)):
-            bin_value = float(row[ndx])
-            samples.append((current_frequency, bin_value))
+        pass1_samples = []
 
-            current_frequency += step_frequency
+        for ndx in range(6, len(row)): # start at 6 to skip row metadata
+            current_value = float(row[ndx])
+            pass1_samples.append(current_value)
+            
+            total_samples += current_value
 
-            total_samples += bin_value
+            if current_value < min_sample:
+                min_sample = current_value
 
-            if bin_value < min_sample:
-                min_sample = bin_value
+            if max_sample < current_value:
+                max_sample = current_value
 
-            if max_sample < bin_value:
-                max_sample = bin_value
+        avg_sample = total_samples / len(pass1_samples)
 
-        avg_sample = total_samples / len(samples)
-
-        self.header['samples'] = samples
-        self.header['statistics'] = {
+        self.json_bag['statistics'] = {
             "avg_sample": avg_sample,
             "min_sample": min_sample,
             "max_sample": max_sample
         }
+
+        # pass2 discover peakers by walking a window through the sample array
+        # highest value within the window is local maxima (peaker)
+
+        pass2_samples = []
+        current_frequency = self.json_bag['meta']['freq_low_hz']
+        step_frequency = self.json_bag['meta']['freq_step_hz']
+        window_edge = 33
+
+        for ndx in range(len(pass1_samples)):
+            current_value = pass1_samples[ndx]
+
+            left_ndx = ndx - window_edge
+            right_ndx = ndx + window_edge + 1
+
+            if left_ndx < 0:
+                left_ndx = 0
+            
+            if right_ndx >= len(pass1_samples):
+                right_ndx = len(pass1_samples) - 1
+
+            mean = sum(pass1_samples[left_ndx:right_ndx])/(right_ndx - left_ndx)
+            if mean > current_value:
+                peaker_flag = False
+            else:
+                local_maxima = max(pass1_samples[left_ndx:right_ndx])
+                if local_maxima == current_value:
+                    peaker_flag = True
+                else:
+                    peaker_flag = False
+
+            pass2_samples.append((int(current_frequency), current_value, mean, peaker_flag))
+
+            current_frequency += step_frequency
+
+        self.json_bag['samples'] = pass2_samples
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***

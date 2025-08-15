@@ -28,19 +28,33 @@ class CsvJson:
         self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
 
-    def json_writer(self, payload: MastodonRow) -> None: 
-        bin_seconds = payload.header['meta']['time_stamp_epoch']
-        freq_low_hz = payload.header['meta']['freq_low_hz']        
-        project = payload.header['project']
-        site = payload.header['site']
+    def file_name(self, payload: MastodonRow) -> str:
+        bin_seconds = payload.json_bag['meta']['time_stamp_epoch']
+        freq_low_hz = payload.json_bag['meta']['freq_low_hz']        
+        project = payload.json_bag['project']
+        site = payload.json_bag['site']
 
-        file_name = f"{self.cooked_dir}/{bin_seconds}-{freq_low_hz}-{project}.{site}"
-      
-        del(payload.header['meta']['time_stamp_dt']) # datetime is not json serializable
+        return f"{self.cooked_dir}/{bin_seconds}-{freq_low_hz}-{project}.{site}"
+
+    def json_writer(self, payload: MastodonRow) -> None:
+        file_name = f"{self.file_name(payload)}.json"
+
+        del(payload.json_bag['meta']['time_stamp_dt']) # datetime is not json serializable
 
         try:
             with open(file_name, "w") as out_file:
-                json.dump(payload.header, out_file, indent=4)
+                json.dump(payload.json_bag, out_file, indent=4)
+        except Exception as error:
+            print(error)
+
+    # plot for [col=2:3] '1754987499-123569850-big-search.anderson1.gp' using 1:col
+    def gnuplot_writer(self, payload: MastodonRow) -> None:
+        file_name = f"{self.file_name(payload)}.gp"
+
+        try:
+            with open(file_name, "w") as out_file:
+                for current in payload.json_bag['samples']:
+                    out_file.write(f"{current[0]}\t{current[1]}\t{current[2]}\n")
         except Exception as error:
             print(error)
 
@@ -48,22 +62,31 @@ class CsvJson:
         helper = MastodonHelper()
         buffer = helper.csv_file_reader(file_name)
 
-        file_name = "big-search-fc4cc836-b05b-4725-b07b-632afbc47d52.anderson1"
-
         for current in buffer:
             row = MastodonRow(file_name)
             row.row_meta(current[0:6])
             row.row_samples(current)
+            self.gnuplot_writer(row)
             self.json_writer(row)
 
     def execute(self) -> None:
         print(f"fresh dir:{self.fresh_dir}")
         os.chdir(self.fresh_dir)
-        os.chdir("/Users/gsc/Documents/github/mellow-mastodon/test")
-        
+        # os.chdir("/Users/gsc/Documents/github/mellow-mastodon/test")
+
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
-        self.csv_file_converter("testaroo")
+
+        for target in targets:
+            print(f"processing {target}")
+            
+            if os.path.isfile(target) is False:
+                print(f"skipping {target}")
+                continue
+
+            self.csv_file_converter(target)
+
+            os.rename(target, self.archive_dir + "/" + target)
 
 print("start csv2json")#
 
