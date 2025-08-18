@@ -11,6 +11,9 @@ failureDir: /var/mellow/mastodon/failure
 # repository of freshly collected observations
 freshDir: /var/mellow/mastodon/fresh
 #
+#
+rawDir: /var/mellow/mastodon/raw
+#
 # test artifacts
 testDir: /var/mellow/mastodon/test
 #
