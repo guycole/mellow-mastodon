@@ -27,6 +27,7 @@ class CsvJson:
         self.cooked_dir = configuration["cookedDir"]
         self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
+        self.raw_dir = configuration["rawDir"]
 
     def file_name(self, payload: MastodonRow) -> str:
         bin_seconds = payload.json_bag['meta']['time_stamp_epoch']
@@ -34,7 +35,7 @@ class CsvJson:
         project = payload.json_bag['project']
         site = payload.json_bag['site']
 
-        return f"{self.cooked_dir}/{bin_seconds}-{freq_low_hz}-{project}.{site}"
+        return f"{self.fresh_dir}/{bin_seconds}-{freq_low_hz}-{project}.{site}"
 
     def json_writer(self, payload: MastodonRow) -> None:
         file_name = f"{self.file_name(payload)}.json"
@@ -70,9 +71,8 @@ class CsvJson:
             self.json_writer(row)
 
     def execute(self) -> None:
-        print(f"fresh dir:{self.fresh_dir}")
-        os.chdir(self.fresh_dir)
-        # os.chdir("/Users/gsc/Documents/github/mellow-mastodon/test")
+        print(f"raw dir:{self.raw_dir}")
+        os.chdir(self.raw_dir)
 
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
@@ -86,9 +86,9 @@ class CsvJson:
 
             self.csv_file_converter(target)
 
-            os.rename(target, self.archive_dir + "/" + target)
+            os.rename(target, self.cooked_dir + "/" + target)
 
-print("start csv2json")#
+print("start csv2json")
 
 #
 # argv[1] = configuration filename
