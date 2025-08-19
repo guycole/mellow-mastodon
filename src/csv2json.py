@@ -25,6 +25,7 @@ class CsvJson:
     def __init__(self, configuration: dict[str, str]):
         self.archive_dir = configuration["archiveDir"]
         self.cooked_dir = configuration["cookedDir"]
+        self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
 
     def file_name(self, payload: MastodonRow) -> str:
@@ -35,10 +36,19 @@ class CsvJson:
 
         return f"{self.cooked_dir}/{bin_seconds}-{freq_low_hz}-{project}.{site}"
 
-    def json_writer(self, payload: MastodonRow) -> None:
+    def json_writer(self, payload: MastodonRow, peaker_only_flag: bool) -> None:
         file_name = f"{self.file_name(payload)}.json"
 
         del(payload.json_bag['meta']['time_stamp_dt']) # datetime is not json serializable
+
+        if peaker_only_flag:
+            peakers_only = []
+
+            for sample in payload.json_bag['samples']:
+                if sample[3] is True:
+                    peakers_only.append(sample)
+
+            payload.json_bag['samples'] = peakers_only
 
         try:
             with open(file_name, "w") as out_file:
@@ -57,7 +67,7 @@ class CsvJson:
         except Exception as error:
             print(error)
 
-    def csv_file_converter(self, file_name: str) -> None:
+    def csv_file_converter(self, file_name: str, peaker_only_flag: bool) -> None:
         helper = MastodonHelper()
         buffer = helper.csv_file_reader(file_name)
 
@@ -65,12 +75,18 @@ class CsvJson:
             row = MastodonRow(file_name)
             row.row_meta(current[0:6])
             row.row_samples(current)
-            self.gnuplot_writer(row)
-            self.json_writer(row)
+
+            if peaker_only_flag:
+                pass
+            else:
+                self.gnuplot_writer(row)
+
+            self.json_writer(row, peaker_only_flag)
 
     def execute(self) -> None:
-        print(f"raw dir:{self.fresh_dir}")
+        print(f"fresh dir:{self.fresh_dir}")
         os.chdir(self.fresh_dir)
+        # os.chdir("/Users/gsc/Documents/github/mellow-mastodon/test")
 
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
@@ -82,11 +98,12 @@ class CsvJson:
                 print(f"skipping {target}")
                 continue
 
-            self.csv_file_converter(target)
+            self.csv_file_converter(target, True)
 
-            os.rename(target, self.archive_dir + "/" + target)
+            os.unlink(target)
+#            os.rename(target, self.archive_dir + "/" + target)
 
-print("start csv2json")
+print("start csv2json")#
 
 #
 # argv[1] = configuration filename

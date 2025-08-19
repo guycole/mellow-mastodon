@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Title: loader.sh
-# Description: parse and load mastodon files to postgres
+# Description: parse files from cooked and move to archive
 # Development Environment: Ubuntu 22.04.05 LTS
 # Author: Guy Cole (guycole at gmail dot com)
 #

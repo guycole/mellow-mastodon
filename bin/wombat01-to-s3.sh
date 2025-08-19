@@ -7,9 +7,25 @@
 #
 PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
 #
+TODAY=$(date '+%Y-%m-%d')
+FILE_NAME="mastodon-${TODAY}.tgz"
+#
 DEST_BUCKET=s3://mellow-mastodon-uw2-m7766.braingang.net/fresh/
 #
-echo "start move"
-cd /var/mellow/mastodon/fresh; gzip *
-aws s3 mv . $DEST_BUCKET --recursive --profile=wombat01
-echo "end move"
+SOURCE_DIR="cooked"
+WORK_DIR="/var/mellow/mastodon"
+#
+echo "start archive"
+#
+cd ${WORK_DIR}
+tar -cvzf ${FILE_NAME} ${SOURCE_DIR}
+#
+echo "start s3 transfer" 
+aws s3 mv ${FILE_NAME} $DEST_BUCKET --profile=wombat01
+#
+echo "cleanup"
+rm -rf ${SOURCE_DIR}
+mkdir ${SOURCE_DIR}
+#
+echo "end archive"
+#
