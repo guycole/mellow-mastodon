@@ -5,7 +5,7 @@
 # Development Environment: Ubuntu 22.04.05 LTS
 # Author: Guy Cole (guycole at gmail dot com)
 #
-PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
+PATH=/bin:/usr/bin:/etc:/usr/local/bin:/opt/homebrew/bin/aws; export PATH
 #
 TODAY=$(date '+%Y-%m-%d')
 FILE_NAME="mastodon-${TODAY}.tgz"
