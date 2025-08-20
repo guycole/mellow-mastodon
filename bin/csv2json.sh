@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Title: csv2json.sh
-# Description:
+# Description: read from fresh and write to cooked
 # Development Environment: Ubuntu 22.04.05 LTS
 # Author: Guy Cole (guycole at gmail dot com)
 #
