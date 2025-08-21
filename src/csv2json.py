@@ -11,6 +11,7 @@ import json
 import os
 import sys
 import time
+
 from unittest import result
 import uuid
 
@@ -27,6 +28,10 @@ class CsvJson:
         self.cooked_dir = configuration["cookedDir"]
         self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
+        self.processed_dir = configuration["processedDir"]
+
+        self.antenna = configuration["antenna"]
+        self.receiver = configuration["receiver"]
 
     def file_name(self, payload: MastodonRow) -> str:
         bin_seconds = payload.json_bag['meta']['time_stamp_epoch']
@@ -67,21 +72,27 @@ class CsvJson:
         except Exception as error:
             print(error)
 
-    def csv_file_converter(self, file_name: str, peaker_only_flag: bool) -> None:
+    def csv_file_converter(self, file_name: str, peaker_only_flag: bool) -> bool:
         helper = MastodonHelper()
         buffer = helper.csv_file_reader(file_name)
 
         for current in buffer:
-            row = MastodonRow(file_name)
-            row.row_meta(current[0:6])
-            row.row_samples(current)
+            try:
+                row = MastodonRow(file_name, self.antenna, self.receiver)
+                row.row_meta(current[0:6])
+                row.row_samples(current)
 
-            if peaker_only_flag:
-                pass
-            else:
-                self.gnuplot_writer(row)
+                if peaker_only_flag:
+                    pass
+                else:
+                    self.gnuplot_writer(row)
 
-            self.json_writer(row, peaker_only_flag)
+                self.json_writer(row, peaker_only_flag)
+
+                return True
+            except Exception as error:
+                print(error)
+                return False
 
     def execute(self) -> None:
         print(f"fresh dir:{self.fresh_dir}")
@@ -98,10 +109,9 @@ class CsvJson:
                 print(f"skipping {target}")
                 continue
 
-            self.csv_file_converter(target, True)
+            ret_flag = self.csv_file_converter(target, True)
 
-            os.unlink(target)
-#            os.rename(target, self.archive_dir + "/" + target)
+            os.rename(target, self.processed_dir + "/" + target)
 
 print("start csv2json")#
 

@@ -12,7 +12,7 @@ import sys
 class MastodonRow:
     json_bag = {}
 
-    def __init__(self, file_name: str):
+    def __init__(self, file_name: str, antenna: str, receiver: str):
         # file name has form project-uuid.site 
         # big-search-d25fbdd2-4445-4d4c-bebc-bbbb4d4122d8.vallejo1
 
@@ -24,10 +24,15 @@ class MastodonRow:
         if len(tokens[0]) < min_size:
             raise Exception("bad token 0 len") 
 
+        host_name = os.uname().nodename
+
         self.json_bag = {
+            "antenna": antenna, 
             "file_name": file_name,
-            "file_type": "mastodon_v1",
+            "file_type": "mastodon-v1",
+            "host_name": host_name,
             "project": tokens[0][:-37],
+            "receiver": receiver,
             "site": tokens[1],
             "meta": {},
             "samples": [],

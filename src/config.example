@@ -11,6 +11,9 @@ failureDir: /var/mellow/mastodon/failure
 # repository of freshly collected observations
 freshDir: /var/mellow/mastodon/fresh
 #
+# processed artifacts
+processedDir: /var/mellow/mastodon/processed
+#
 # test artifacts
 testDir: /var/mellow/mastodon/test
 #
@@ -19,4 +22,10 @@ dbConn: "postgresql+psycopg2://mastodon_py:bogus@localhost:5432/mastodon_v1"
 #
 # true, echo SQL statements
 sqlEchoEnable: true
+#
+# equipment
+antenna: whip
+#
+# equipment
+receiver: rtl-sdr-5
 #
