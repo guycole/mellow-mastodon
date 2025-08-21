@@ -1,0 +1,5 @@
+rtl_power -> /tmp/power.file -> fresh
+fresh -> csv2json -> cooked -> aws/fresh
+aws/fresh -> fresh -> aws/archive
+load peakerz
+
