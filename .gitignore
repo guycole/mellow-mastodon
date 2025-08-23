@@ -175,4 +175,5 @@ cython_debug/
 
 *~
 
+src/config.yaml
 test/big-search-e51eb6f4-468c-40d1-89e4-772a4c870a65.anderson1
