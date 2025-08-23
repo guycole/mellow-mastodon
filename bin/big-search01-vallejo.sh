@@ -1,11 +1,15 @@
 #!/bin/bash
 #
 # Title: big-search01-vallejo.sh
-# Description: 
+# Description: mastodon collection
 # Development Environment: Ubuntu 22.04.05 LTS
 # Author: Guy Cole (guycole at gmail dot com)
 #
 PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
+#
+HOME_DIR="/home/gsc/Documents/github/mellow-mastodon"
+#HOME_DIR="/Users/gsc/Documents/github/mellow-mastodon"
+VARMEL_DIR=/var/mellow/mastodon
 #
 BIN_SIZE=5k
 DURATION=19m
@@ -19,9 +23,13 @@ SCRIPT_NAME=$0
 TODAY=$(date '+%Y-%m-%d')
 UUID=$(uuidgen)
 #
-FILE_NAME="big-search-${UUID}.vallejo1.gz"
+RTL_POWER="/usr/local/bin/rtl_power"
 #
-rtl_power -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION | gzip > /tmp/$FILE_NAME
+DATA_FILE_NAME="big-search01-${UUID}.vallejo1.gz"
+KIT_FILE_NAME="big-search01-${UUID}.vallejo1_kit.json"
 #
-mv /tmp/$FILE_NAME /var/mellow/mastodon/fresh/$FILE_NAME 
+$RTL_POWER -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION | gzip > /tmp/$DATA_FILE_NAME
+#
+mv /tmp/$DATA_FILE_NAME $VARMEL_DIR/fresh/$DATA_FILE_NAME
+cp $HOME_DIR/bin/vallejo01.kit $VARMEL_DIR/fresh/$KIT_FILE_NAME
 #
