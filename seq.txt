@@ -3,3 +3,6 @@ fresh -> csv2json -> cooked -> aws/fresh
 aws/fresh -> fresh -> aws/archive
 load peakerz
 
+fresh-from-s3.sh
+loader.py
+

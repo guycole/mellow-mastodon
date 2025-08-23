@@ -23,6 +23,7 @@ class Loader:
     def __init__(self, configuration: dict[str, str]):
         self.db_conn = configuration["dbConn"]
         self.archive_dir = configuration["archiveDir"]
+        self.cooked_dir = configuration["cookedDir"]
         self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
         self.sql_echo = configuration["sqlEchoEnable"]
@@ -55,9 +56,9 @@ class Loader:
         os.rename(file_name, self.failure_dir + "/" + file_name)
 
     def execute(self) -> None:
-        print(f"fresh dir:{self.fresh_dir}")
-        os.chdir(self.fresh_dir)
-        
+        print(f"cooked  dir:{self.cooked_dir}")
+        os.chdir(self.cooked_dir)
+ 
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
 
@@ -69,46 +70,46 @@ class Loader:
                 continue
 
             # test for duplicate file
-            selected = self.postgres.load_log_select_by_file_name(target)
-            if selected is not None:
-                print(f"skip duplicate file:{target}")
-                self.file_failure(target)
-                continue
+#            selected = self.postgres.load_log_select_by_file_name(target)
+#3            if selected is not None:
+#                print(f"skip duplicate file:{target}")
+#                self.file_failure(target)
+#                continue
 
             # process file
-            converter = Converter()
-            if converter.converter(target) is False:
-                print(f"converter failure noted:{target}")
-                self.file_failure(target)
-                continue
+#            converter = Converter()
+#            if converter.converter(target) is False:
+##                print(f"converter failure noted:{target}")
+#                self.file_failure(target)
+#                continue
 
-            start_time_stamp = datetime.datetime.now()
+#            start_time_stamp = datetime.datetime.now()
 
-            load_log = self.postgres.load_log_insert(converter.get_load_log())
-            print(f"load_log {target}")
+#            load_log = self.postgres.load_log_insert(converter.get_load_log())
+#            print(f"load_log {target}")
 
-            converted = converter.get_converted()
-            counter = 1
-            for row in converted["rows"]:
+#            converted = converter.get_converted()
+#            counter = 1
+#            for row in converted["rows"]:
                 #                print(".", end=" ", flush=True)
 
-                print(f"{counter}", end='\r')
-                counter += 1
+#                print(f"{counter}", end='\r')
+#                counter += 1
                 
-                rh = converter.get_row_header(row, load_log.id)
-                row_header = self.postgres.row_header_insert(rh)
+#                rh = converter.get_row_header(row, load_log.id)
+#                row_header = self.postgres.row_header_insert(rh)
 
-                self.postgres.bin_sample_bulk_insert(row["bin_samples"], row_header.id)
+#                self.postgres.bin_sample_bulk_insert(row["bin_samples"], row_header.id)
 
-            print("")
+#            print("")
 
-            self.file_success(target)
+#            self.file_success(target)
 
-            stop_time_stamp = datetime.datetime.now()
-            duration = stop_time_stamp - start_time_stamp
-            print(f"duration {duration.seconds} seconds")
+#            stop_time_stamp = datetime.datetime.now()
+#            duration = stop_time_stamp - start_time_stamp
+#            print(f"duration {duration.seconds} seconds")
 
-        print(f"success:{self.success_counter} failure:{self.failure_counter}")
+#        print(f"success:{self.success_counter} failure:{self.failure_counter}")
 
 
 print("start loader")
