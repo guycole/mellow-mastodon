@@ -28,7 +28,7 @@ RTL_POWER="/usr/local/bin/rtl_power"
 DATA_FILE_NAME="big-search01-${UUID}.vallejo1.gz"
 KIT_FILE_NAME="big-search01-${UUID}.vallejo1_kit.json"
 #
-$RTL_POWER -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION | gzip > /tmp/$DATA_FILE_NAME
+time $RTL_POWER -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION | gzip > /tmp/$DATA_FILE_NAME
 #
 mv /tmp/$DATA_FILE_NAME $VARMEL_DIR/fresh/$DATA_FILE_NAME
 cp $HOME_DIR/bin/vallejo01.kit $VARMEL_DIR/fresh/$KIT_FILE_NAME
