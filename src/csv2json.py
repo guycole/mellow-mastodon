@@ -24,14 +24,15 @@ from mastodon_row import MastodonRow
 class CsvJson:
 
     def __init__(self, configuration: dict[str, str]):
-        self.archive_dir = configuration["archiveDir"]
+#        self.archive_dir = configuration["archiveDir"]
         self.cooked_dir = configuration["cookedDir"]
-        self.failure_dir = configuration["failureDir"]
+#        self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
         self.processed_dir = configuration["processedDir"]
+        self.test_dir = configuration["testDir"]
 
-        self.antenna = configuration["antenna"]
-        self.receiver = configuration["receiver"]
+        self.peaker_only = configuration["peakerOnly"]
+        self.test_mode = configuration["testModeEnable"]
 
     def file_name(self, payload: MastodonRow) -> str:
         bin_seconds = payload.json_bag['meta']['time_stamp_epoch']
@@ -40,6 +41,17 @@ class CsvJson:
         site = payload.json_bag['site']
 
         return f"{self.cooked_dir}/{bin_seconds}-{freq_low_hz}-{project}.{site}"
+
+    def json_reader(self, file_name: str) -> dict[str, any]:
+        results = {}
+
+        try:
+            with open(file_name, "r") as in_file:
+                results = json.load(in_file)
+        except Exception as error:
+            print(error)
+
+        return results
 
     def json_writer(self, payload: MastodonRow, peaker_only_flag: bool) -> None:
         file_name = f"{self.file_name(payload)}.json"
@@ -72,32 +84,35 @@ class CsvJson:
         except Exception as error:
             print(error)
 
-    def csv_file_converter(self, file_name: str, peaker_only_flag: bool) -> bool:
+    def csv_file_converter(self, file_name: str, personality: dict[str, any]) -> bool:
         helper = MastodonHelper()
         buffer = helper.csv_file_reader(file_name)
 
         for current in buffer:
             try:
-                row = MastodonRow(file_name, self.antenna, self.receiver)
+                row = MastodonRow(file_name, personality)
                 row.row_meta(current[0:6])
                 row.row_samples(current)
 
-                if peaker_only_flag:
+                if self.peaker_only:
                     pass
                 else:
                     self.gnuplot_writer(row)
 
-                self.json_writer(row, peaker_only_flag)
-
-                return True
+                self.json_writer(row, self.peaker_only)
             except Exception as error:
                 print(error)
                 return False
 
+        return True
+
     def execute(self) -> None:
-        print(f"fresh dir:{self.fresh_dir}")
-        os.chdir(self.fresh_dir)
-        # os.chdir("/Users/gsc/Documents/github/mellow-mastodon/test")
+        if self.test_mode:
+            print(f"test dir:{self.test_dir}")
+            os.chdir(self.test_dir)
+        else:
+            print(f"fresh dir:{self.fresh_dir}")
+            os.chdir(self.fresh_dir)
 
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
@@ -109,9 +124,24 @@ class CsvJson:
                 print(f"skipping {target}")
                 continue
 
-            ret_flag = self.csv_file_converter(target, True)
+            personality = {}
+            if target.endswith(".json"):
+                personality = self.json_reader(target)
+            else:
+                print(f"skipping non-json file: {target}")
+                continue
 
-            os.rename(target, self.processed_dir + "/" + target)
+            if len(personality) < 1:
+                print(f"skipping empty personality: {target}")
+                continue
+
+            power_name = target.split(".")[0]
+            ret_flag = self.csv_file_converter(power_name, personality)
+
+            if self.test_mode:
+                print(f"skipping file move")
+            else:
+                os.rename(target, self.processed_dir + "/" + target)
 
 print("start csv2json")#
 

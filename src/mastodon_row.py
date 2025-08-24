@@ -12,28 +12,15 @@ import sys
 class MastodonRow:
     json_bag = {}
 
-    def __init__(self, file_name: str, antenna: str, receiver: str):
-        # file name has form project-uuid.site 
-        # big-search-d25fbdd2-4445-4d4c-bebc-bbbb4d4122d8.vallejo1
-
-        tokens = file_name.split(".")
-        if len(tokens) != 2:
-            raise Exception("bad token len")
-
-        min_size = len("-d25fbdd2-4445-4d4c-bebc-bbbb4d4122d8")
-        if len(tokens[0]) < min_size:
-            raise Exception("bad token 0 len") 
-
-        host_name = os.uname().nodename
-
+    def __init__(self, file_name: str, personality: dict[str, any]):
         self.json_bag = {
-            "antenna": antenna, 
+            "antenna": personality["antenna"],
             "file_name": file_name,
             "file_type": "mastodon-v1",
-            "host_name": host_name,
-            "project": tokens[0][:-37],
-            "receiver": receiver,
-            "site": tokens[1],
+            "host_name": personality["host"],
+            "project": personality["project"],
+            "receiver": personality["receiver"],
+            "site": personality["site"],
             "meta": {},
             "samples": [],
             "statistics": {}

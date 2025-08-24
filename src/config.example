@@ -23,9 +23,9 @@ dbConn: "postgresql+psycopg2://mastodon_py:bogus@localhost:5432/mastodon_v1"
 # true, echo SQL statements
 sqlEchoEnable: true
 #
-# equipment
-antenna: whip
+# true JSON output is only peakers else all bins
+peakerOnly: true
 #
-# equipment
-receiver: rtl-sdr-5
+# true, enable test mode
+testModeEnable: true
 #
