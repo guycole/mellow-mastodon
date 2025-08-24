@@ -12,6 +12,7 @@ FILE_NAME="mastodon-${TODAY}.tgz"
 #
 DEST_BUCKET=s3://mellow-mastodon-uw2-m7766.braingang.net/fresh/
 #
+PROCESSED_DIR="processed"
 SOURCE_DIR="cooked"
 WORK_DIR="/var/mellow/mastodon"
 #
@@ -26,6 +27,8 @@ aws s3 mv ${FILE_NAME} $DEST_BUCKET --profile=wombat01
 echo "cleanup"
 rm -rf ${SOURCE_DIR}
 mkdir ${SOURCE_DIR}
+rm -rf ${PROCESSED_DIR}
+mkdir ${PROCESSED_DIR}
 #
 echo "end archive"
 #
