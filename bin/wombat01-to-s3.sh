@@ -7,8 +7,13 @@
 #
 PATH=/bin:/usr/bin:/etc:/usr/local/bin:/opt/homebrew/bin/aws; export PATH
 #
+if [[ $# -eq 0 ]] ; then
+    echo "missing site argument"
+    exit 1
+fi
+#
 TODAY=$(date '+%Y-%m-%d')
-FILE_NAME="mastodon-${TODAY}.tgz"
+FILE_NAME="$1-${TODAY}.tgz"
 #
 DEST_BUCKET=s3://mellow-mastodon-uw2-m7766.braingang.net/fresh/
 #
@@ -16,7 +21,7 @@ PROCESSED_DIR="processed"
 SOURCE_DIR="cooked"
 WORK_DIR="/var/mellow/mastodon"
 #
-echo "start archive"
+echo "start archive for $FILE_NAME"
 #
 cd ${WORK_DIR}
 tar -cvzf ${FILE_NAME} ${SOURCE_DIR}

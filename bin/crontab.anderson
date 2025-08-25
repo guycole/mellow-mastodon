@@ -1,5 +1,5 @@
 #
 11,31,51 * * * * /home/gsc/Documents/github/mellow-mastodon/bin/big-search01-anderson.sh > /dev/null 2>&1
 13 * * * * /home/gsc/Documents/github/mellow-mastodon/bin/csv2json.sh > /dev/null 2>&1
-39 23 * * * /home/gsc/Documents/github/mellow-mastodon/bin/wombat01-to-s3.sh > /dev/null 2>&1
+39 23 * * * /home/gsc/Documents/github/mellow-mastodon/bin/wombat01-to-s3.sh anderson01 > /dev/null 2>&1
 #
