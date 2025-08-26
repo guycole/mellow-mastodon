@@ -1,0 +1,7 @@
+{
+  "antenna": "discone2",
+  "host": "rpi4k",
+  "project": "big-search01",
+  "receiver": "rtl-sdr-5",
+  "site": "vallejo1"
+}

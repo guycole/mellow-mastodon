@@ -28,15 +28,8 @@ RTL_POWER="/usr/local/bin/rtl_power"
 DATA_FILE_NAME="${UUID}.gz"
 KIT_FILE_NAME="${UUID}.json"
 #
-if test -f "$HOME_DIR/bin/$1"; then
-    echo "$1 noted."
-else 
-    echo "$1 not found."
-    exit(1)
-fi
-#
 time $RTL_POWER -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION | gzip > /tmp/$DATA_FILE_NAME
 #
 mv /tmp/$DATA_FILE_NAME $VARMEL_DIR/fresh/$DATA_FILE_NAME
-cp $HOME_DIR/bin/$1 $VARMEL_DIR/fresh/$KIT_FILE_NAME
+cp $HOME_DIR/bin/big-search01-vallejo.kit $VARMEL_DIR/fresh/$KIT_FILE_NAME
 #
