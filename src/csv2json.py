@@ -141,8 +141,10 @@ class CsvJson:
             if self.test_mode:
                 print(f"skipping file move")
             else:
-                os.rename(target, self.processed_dir + "/" + target)
-                os.rename(power_name, self.processed_dir + "/" + power_name)
+                os.unlink(target)
+                os.unlink(power_name)
+#                os.rename(target, self.processed_dir + "/" + target)
+#                os.rename(power_name, self.processed_dir + "/" + power_name)
 
 print("start csv2json")#
 

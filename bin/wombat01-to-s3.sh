@@ -24,6 +24,10 @@ WORK_DIR="/var/mellow/mastodon"
 echo "start archive for $FILE_NAME"
 #
 cd ${WORK_DIR}
+#
+rm -rf ${PROCESSED_DIR}
+mkdir ${PROCESSED_DIR}
+#
 tar -cvzf ${FILE_NAME} ${SOURCE_DIR}
 #
 echo "start s3 transfer" 
@@ -32,8 +36,6 @@ aws s3 mv ${FILE_NAME} $DEST_BUCKET --profile=wombat01
 echo "cleanup"
 rm -rf ${SOURCE_DIR}
 mkdir ${SOURCE_DIR}
-rm -rf ${PROCESSED_DIR}
-mkdir ${PROCESSED_DIR}
 #
 echo "end archive"
 #
