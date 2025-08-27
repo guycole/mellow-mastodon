@@ -29,3 +29,20 @@ peakerOnly: true
 # true, enable test mode
 testModeEnable: true
 #
+# collection antenna
+#antenna: discone1
+#antenna: discone2
+antenna: whip
+#
+# collection host location
+#site: anderson1
+site: development1
+#site: vallejo1
+#
+# project
+project: big-search01
+#
+# receiver
+receiver: rtl-sdr-5
+#receiver: rtl-sdr-14
+#

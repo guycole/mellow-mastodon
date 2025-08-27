@@ -34,6 +34,11 @@ class CsvJson:
         self.peaker_only = configuration["peakerOnly"]
         self.test_mode = configuration["testModeEnable"]
 
+        self.antenna = configuration["antenna"]
+        self.project = configuration["project"]
+        self.receiver = configuration["receiver"]
+        self.site = configuration["site"]
+
     def file_name(self, payload: MastodonRow) -> str:
         bin_seconds = payload.json_bag['meta']['time_stamp_epoch']
         freq_low_hz = payload.json_bag['meta']['freq_low_hz']        

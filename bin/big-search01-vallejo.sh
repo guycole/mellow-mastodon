@@ -25,11 +25,11 @@ UUID=$(uuidgen)
 #
 RTL_POWER="/usr/local/bin/rtl_power"
 #
-DATA_FILE_NAME="${UUID}.gz"
-KIT_FILE_NAME="${UUID}.json"
+PROJECT_NAME="big-search01"
 #
-time $RTL_POWER -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION | gzip > /tmp/$DATA_FILE_NAME
+POWER_FILE_NAME="$PROJECT_NAME.${UUID}"
 #
-mv /tmp/$DATA_FILE_NAME $VARMEL_DIR/fresh/$DATA_FILE_NAME
-cp $HOME_DIR/bin/big-search01-vallejo.kit $VARMEL_DIR/fresh/$KIT_FILE_NAME
+time $RTL_POWER -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION > /tmp/$POWER_FILE_NAME
+#
+mv /tmp/$POWER_FILE_NAME $VARMEL_DIR/fresh/$POWER_FILE_NAME
 #
