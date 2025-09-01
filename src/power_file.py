@@ -11,8 +11,6 @@ from power_file_helper import PowerFileHelper
 from power_file_row import PowerFileRow
 
 class PowerFile:
-    half_window_size = 33
-
     def __init__(self, antenna: str, project: str, receiver: str, site: str):
       
         self.meta_map = {
@@ -27,9 +25,10 @@ class PowerFile:
     def __str__(self):
         return f"PowerFile: {self.meta_map['time_stamp_epoch']}"
 
-    def json_writer(self, fresh_dir: str, peakers_list: list[tuple [int, float, float]]) -> None:
-        file_name = f"{fresh_dir}/{self.meta_map['project']}-{self.meta_map['time_stamp_epoch']}-{self.meta_map['site']}.json"
-        print(file_name)
+    def json_writer(self, time_stamp_epoch: int, archive_dir: str, peakers_list: list[tuple [int, float, float]]) -> None:
+        self.meta_map['time_stamp_epoch'] = time_stamp_epoch
+
+        file_name = f"{archive_dir}/{self.meta_map['project']}-{self.meta_map['time_stamp_epoch']}-{self.meta_map['site']}.json"
 
         payload = {
             "meta": self.meta_map,
@@ -42,13 +41,6 @@ class PowerFile:
         except Exception as error:
             print(error)
 
-    def peakers(self, pem: dict[int, PowerFileEpoch], dirname: str) -> None:
-        """ write file for each epoch time """
-        for key in pem.keys():
-            self.meta_map['time_stamp_epoch'] = key
-            peaker_list = pem[key].peakers(self.half_window_size, dirname)
-            self.json_writer(dirname, peaker_list)
-
     def parser(self, file_name:str) -> dict[int, PowerFileEpoch]:
         """read csv file and convert each row"""
 
@@ -58,8 +50,8 @@ class PowerFile:
 
         # convert each csv row into PowerFileRow object, store in power_epoch_map
         power_epoch_map = {}
-        for current in raw_buffer:
-            pfr = PowerFileRow(current)
+        for raw_row in raw_buffer:
+            pfr = PowerFileRow(raw_row)
             pfr.convert_samples()
 
             if pfr.validate_frequencies() is False:

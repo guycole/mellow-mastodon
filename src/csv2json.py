@@ -25,17 +25,13 @@ from power_file import PowerFile
 
 
 class CsvJson:
+    half_window_size = 33
+
     def __init__(self, configuration: dict[str, str]):
-        #        self.archive_dir = configuration["archiveDir"]
+        self.archive_dir = configuration["archiveDir"]
         self.cooked_dir = configuration["cookedDir"]
-        #        self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
         self.processed_dir = configuration["processedDir"]
-        self.row_dir = configuration["rowDir"]
-        self.test_dir = configuration["testDir"]
-
-        self.peaker_only = configuration["peakerOnly"]
-        self.test_mode = configuration["testModeEnable"]
 
         self.antenna = configuration["antenna"]
         self.project = configuration["project"]
@@ -43,12 +39,8 @@ class CsvJson:
         self.site = configuration["site"]
 
     def execute(self) -> None:
-        if self.test_mode:
-            print(f"test dir:{self.test_dir}")
-            os.chdir(self.test_dir)
-        else:
-            print(f"fresh dir:{self.fresh_dir}")
-            os.chdir(self.fresh_dir)
+        print(f"fresh dir:{self.fresh_dir}")
+        os.chdir(self.fresh_dir)
 
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
@@ -66,14 +58,14 @@ class CsvJson:
 
             power_file = PowerFile(self.antenna, self.project, self.receiver, self.site)
             power_epoch_map = power_file.parser(target)
-            power_file.peakers(power_epoch_map, self.row_dir)
+            for key in power_epoch_map.keys():
+                # peakers by epoch time sorted by frequency
+                peaker_list = power_epoch_map[key].peakers(self.half_window_size, self.cooked_dir)
+                power_file.json_writer(key, self.archive_dir, peaker_list)
 
-            if self.test_mode:
-                print(f"skipping file move")
-            else:
-                os.rename(target, self.processed_dir + "/" + target)
+            os.rename(target, self.processed_dir + "/" + target)
 
-print("start csv2json")  #
+print("start csv2json")
 
 #
 # argv[1] = configuration filename

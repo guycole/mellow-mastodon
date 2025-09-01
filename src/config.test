@@ -9,8 +9,8 @@ cookedDir: /var/mellow/mastodon/cooked
 failureDir: /var/mellow/mastodon/failure
 #
 # repository of freshly collected observations
-freshDir: /var/mellow/mastodon/fresh
-#freshDir: /Users/gsc/Documents/github/mellow-mastodon/test
+#freshDir: /var/mellow/mastodon/fresh
+freshDir: /Users/gsc/Documents/github/mellow-mastodon/test
 #
 # processed artifacts
 processedDir: /var/mellow/mastodon/processed

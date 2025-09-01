@@ -15,6 +15,6 @@ echo "start csv2json"
 cd $VARMEL_DIR/fresh;gunzip *
 cd $HOME_DIR/mellow-mastodon/src
 source venv/bin/activate
-python3 ./csv2json.py
+time python3 ./csv2json.py
 echo "end csv2json"
 #
