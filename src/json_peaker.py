@@ -16,8 +16,8 @@ import uuid
 import yaml
 from yaml.loader import SafeLoader
 
-class JsonPeaker:
 
+class JsonPeaker:
     def __init__(self, configuration: dict[str, str]):
         self.cooked_dir = configuration["cookedDir"]
 
@@ -48,10 +48,10 @@ class JsonPeaker:
         total_samples = 0
 
         frequency_bins = []
-        current_frequency = buffer['meta']['freq_low']
-        for sample in buffer['meta']['bin_samples']:
+        current_frequency = buffer["meta"]["freq_low"]
+        for sample in buffer["meta"]["bin_samples"]:
             frequency_bins.append((current_frequency, sample))
-            current_frequency += buffer['meta']['freq_step']
+            current_frequency += buffer["meta"]["freq_step"]
 
             total_samples += sample
 
@@ -61,7 +61,7 @@ class JsonPeaker:
             if max_sample < sample:
                 max_sample = sample
 
-        avg_sample = total_samples / len(buffer['meta']['bin_samples'])
+        avg_sample = total_samples / len(buffer["meta"]["bin_samples"])
 
         print(f"average:{avg_sample} min:{min_sample} max:{max_sample}")
 
@@ -69,11 +69,12 @@ class JsonPeaker:
 
     def execute(self, infile: str) -> None:
         full_name = os.path.join(self.cooked_dir, infile)
-            
+
         if os.path.isfile(full_name) is True:
             frequency_bins = self.frequency_bin_converter(full_name)
         else:
             print(f"skipping {full_name}")
+
 
 print("start json_peaker")
 
@@ -94,7 +95,7 @@ if __name__ == "__main__":
 
     # samples
     candidate = "1752539766-123569850-big-search.anderson1"
-    #candidate = "1752539766-462058275-big-search.anderson1"
+    # candidate = "1752539766-462058275-big-search.anderson1"
 
     jp = JsonPeaker(configuration)
     jp.execute(candidate)

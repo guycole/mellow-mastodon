@@ -10,9 +10,22 @@ PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
 HOME_DIR="/home/gsc/Documents/github"
 #HOME_DIR="/Users/gsc/Documents/github"
 #
-echo "start csv2json"
+COOKED_DIR="cooked"
+PROCESSED_DIR="processed"
+WORK_DIR="/var/mellow/mastodon"
+#
+echo "begin csv2json"
 cd $HOME_DIR/mellow-mastodon/src
 source venv/bin/activate
-python3 ./csv2json.py
+time python3 ./csv2json.py
+#
+cd $WORK_DIR
+#
+rm -rf ${COOKED_DIR}
+mkdir ${COOKED_DIR}
+#
+rm -rf ${PROCESSED_DIR}
+mkdir ${PROCESSED_DIR}
+#
 echo "end csv2json"
 #

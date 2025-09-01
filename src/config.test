@@ -1,0 +1,43 @@
+#
+# repository of processed observations
+archiveDir: /var/mellow/mastodon/archive
+#
+# repository of converted observations
+cookedDir: /var/mellow/mastodon/cooked
+#
+# repository of problem files
+failureDir: /var/mellow/mastodon/failure
+#
+# repository of freshly collected observations
+#freshDir: /var/mellow/mastodon/fresh
+freshDir: /Users/gsc/Documents/github/mellow-mastodon/test
+#
+# processed artifacts
+processedDir: /var/mellow/mastodon/processed
+#
+# row artifacts
+rowDir: /var/mellow/mastodon/row
+#
+# database connection
+dbConn: "postgresql+psycopg2://mastodon_py:bogus@localhost:5432/mastodon_v1"
+#
+# true, echo SQL statements
+sqlEchoEnable: true
+#
+# collection antenna
+#antenna: discone1
+#antenna: discone2
+antenna: whip
+#
+# collection host location
+#site: anderson1
+site: development1
+#site: vallejo1
+#
+# project
+project: big-search01
+#
+# receiver
+receiver: rtl-sdr-5
+#receiver: rtl-sdr-14
+#

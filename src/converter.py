@@ -13,11 +13,11 @@ import uuid
 
 from sql_table import BinSample, LoadLog, RowHeader
 
-class Converter:
 
+class Converter:
     converted = {}
 
-#    date, time, Hz low, Hz high, Hz step, samples, dbm, dbm, ...
+    #    date, time, Hz low, Hz high, Hz step, samples, dbm, dbm, ...
 
     def parse_file_name(self, file_name: str) -> bool:
         # file name has form project-uuid.site #
@@ -32,7 +32,7 @@ class Converter:
             "file_name": file_name,
             "project": tokens[0][:-37],
             "site": tokens[1],
-            "rows": []
+            "rows": [],
         }
 
         return True
@@ -41,12 +41,12 @@ class Converter:
         # ['2025-05-16', ' 04:16:20', ' 966482608', ' 969275710', ' 2727.64']
         # "\tdate, time, Hz low, Hz high, Hz step, samples, dbm, dbm, ...
 
-        row_date = row[0].split('-')
+        row_date = row[0].split("-")
         yy = int(row_date[0])
         mm = int(row_date[1])
         dd = int(row_date[2])
 
-        row_time = row[1].split(':')
+        row_time = row[1].split(":")
         hour = int(row_time[0])
         minute = int(row_time[1])
         second = int(row_time[2])
@@ -57,7 +57,7 @@ class Converter:
             "freq_step": float(row[4]),
             "sample_quantity": int(row[5]),
             "time_stamp": datetime.datetime(yy, mm, dd, hour, minute, second),
-            "bin_samples": []
+            "bin_samples": [],
         }
 
         return results
@@ -66,7 +66,7 @@ class Converter:
         row_meta = self.process_row_meta(row[0:6])
 
         mean_array_length = 63
-        rolling_mean_values = [-23]*mean_array_length
+        rolling_mean_values = [-23] * mean_array_length
 
         current_freq = row_meta["freq_low"]
         for ndx in range(6, len(row)):
@@ -75,17 +75,17 @@ class Converter:
             rolling_mean_values.pop(0)
             rolling_mean_values.append(bin_value)
 
-            mean_value = sum(rolling_mean_values)/mean_array_length
-            peaker_flag = True if abs(bin_value) > abs(mean_value)  else False
-            
+            mean_value = sum(rolling_mean_values) / mean_array_length
+            peaker_flag = True if abs(bin_value) > abs(mean_value) else False
+
             # iterate for each bin and convert to sql_table.BinSample dictionary
             bin_sample = {
-                "bin_ndx": ndx, # note origin is six not zero
+                "bin_ndx": ndx,  # note origin is six not zero
                 "freq_hz": current_freq,
                 "peaker_flag": peaker_flag,
                 "rolling_mean": mean_value,
                 "row_head_id": 0,
-                "signal_dbm": bin_value
+                "signal_dbm": bin_value,
             }
 
             row_meta["bin_samples"].append(bin_sample)
@@ -93,21 +93,21 @@ class Converter:
             current_freq += row_meta["freq_step"]
 
         # shift moving average (to fix lagging value)
-#        bin_samples = row_meta["bin_samples"]
-#        lag_ndx = 0
+        #        bin_samples = row_meta["bin_samples"]
+        #        lag_ndx = 0
 
-#        for lead_ndx in range(mean_array_length//2, len(bin_samples)):
-#            leading = bin_samples[lead_ndx]
-#            lagging = bin_samples[lag_ndx]
+        #        for lead_ndx in range(mean_array_length//2, len(bin_samples)):
+        #            leading = bin_samples[lead_ndx]
+        #            lagging = bin_samples[lag_ndx]
 
-#            lagging["rolling_mean"] = leading["rolling_mean"]
+        #            lagging["rolling_mean"] = leading["rolling_mean"]
 
-#            bin_value = lagging["signal_dbm"]
-#            threshold_value = abs(lagging["rolling_mean"]) * 1.11
- 
-#            lagging["peaker_flag"] = True if abs(bin_value) > threshold_value else False
+        #            bin_value = lagging["signal_dbm"]
+        #            threshold_value = abs(lagging["rolling_mean"]) * 1.11
 
-#            lag_ndx += 1
+        #            lagging["peaker_flag"] = True if abs(bin_value) > threshold_value else False
+
+        #            lag_ndx += 1
 
         return row_meta
 
@@ -159,7 +159,7 @@ class Converter:
             "bin_ndx": args[0],
             "freq_hz": round(args[2]),
             "parent_id": row_id,
-            "signal_dbm": args[1]
+            "signal_dbm": args[1],
         }
 
     def get_row_header(self, args: dict[str, any], load_log_id: int) -> RowHeader:
@@ -170,11 +170,11 @@ class Converter:
             "freq_hz_step": args["freq_step"],
             "load_log_id": load_log_id,
             "row_time": args["time_stamp"],
-            "sample_quantity": args["sample_quantity"]
+            "sample_quantity": args["sample_quantity"],
         }
 
     def converter(self, file_name: str) -> bool:
-        """ main entry point """
+        """main entry point"""
 
         if self.parse_file_name(file_name) is False:
             print("file name parse failure")
@@ -187,6 +187,7 @@ class Converter:
         print(f"rows converted {len(self.converted['rows'])}")
 
         return True
+
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***
