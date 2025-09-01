@@ -14,8 +14,11 @@ freshDir: /var/mellow/mastodon/fresh
 # processed artifacts
 processedDir: /var/mellow/mastodon/processed
 #
+# row artifacts
+rowDir: /var/mellow/mastodon/row
+#
 # test artifacts
-testDir: /var/mellow/mastodon/test
+testDir: /Users/gsc/Documents/github/mellow-mastodon/test
 #
 # database connection
 dbConn: "postgresql+psycopg2://mastodon_py:bogus@localhost:5432/mastodon_v1"

@@ -18,8 +18,8 @@ import postgres
 
 from converter import Converter
 
-class Loader:
 
+class Loader:
     def __init__(self, configuration: dict[str, str]):
         self.db_conn = configuration["dbConn"]
         self.archive_dir = configuration["archiveDir"]
@@ -58,25 +58,27 @@ class Loader:
     def execute(self) -> None:
         print(f"cooked  dir:{self.cooked_dir}")
         os.chdir(self.cooked_dir)
- 
+
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
 
         for target in targets:
             print(f"processing {target}")
-            
+
             if os.path.isfile(target) is False:
                 print(f"skipping {target}")
                 continue
 
             # test for duplicate file
+
+
 #            selected = self.postgres.load_log_select_by_file_name(target)
-#3            if selected is not None:
+# 3            if selected is not None:
 #                print(f"skip duplicate file:{target}")
 #                self.file_failure(target)
 #                continue
 
-            # process file
+# process file
 #            converter = Converter()
 #            if converter.converter(target) is False:
 ##                print(f"converter failure noted:{target}")
@@ -91,11 +93,11 @@ class Loader:
 #            converted = converter.get_converted()
 #            counter = 1
 #            for row in converted["rows"]:
-                #                print(".", end=" ", flush=True)
+#                print(".", end=" ", flush=True)
 
 #                print(f"{counter}", end='\r')
 #                counter += 1
-                
+
 #                rh = converter.get_row_header(row, load_log.id)
 #                row_header = self.postgres.row_header_insert(rh)
 

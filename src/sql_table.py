@@ -23,6 +23,7 @@ mapper_registry = registry()
 class Base(DeclarativeBase):
     pass
 
+
 class BinSample(Base):
     """bin_sample table definition"""
 
@@ -46,7 +47,8 @@ class BinSample(Base):
 
     def __repr__(self):
         return f"bin_sample({self.row_id} {self.bin_ndx})"
-    
+
+
 class LoadLog(Base):
     """load_log table definition"""
 
@@ -75,6 +77,7 @@ class LoadLog(Base):
     def __repr__(self):
         return f"load_log({self.file_name} {self.first_row_time})"
 
+
 class RowHeader(Base):
     """row_header table definition"""
 
@@ -102,6 +105,7 @@ class RowHeader(Base):
 
     def __repr__(self):
         return f"row_header({self.load_log_id} {self.freq_hz_low} {self.freq_hz_high})"
+
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***

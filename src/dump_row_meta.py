@@ -18,15 +18,15 @@ import uuid
 import yaml
 from yaml.loader import SafeLoader
 
-from mastodon_helper import MastodonHelper
+from power_file_helper import MastodonHelper
 from mastodon_row import MastodonRow
 
-class CsvJson:
 
+class CsvJson:
     def __init__(self, configuration: dict[str, str]):
-#        self.archive_dir = configuration["archiveDir"]
+        #        self.archive_dir = configuration["archiveDir"]
         self.cooked_dir = configuration["cookedDir"]
-#        self.failure_dir = configuration["failureDir"]
+        #        self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
         self.processed_dir = configuration["processedDir"]
         self.test_dir = configuration["testDir"]
@@ -35,10 +35,10 @@ class CsvJson:
         self.test_mode = configuration["testModeEnable"]
 
     def file_name(self, payload: MastodonRow) -> str:
-        bin_seconds = payload.json_bag['meta']['time_stamp_epoch']
-        freq_low_hz = payload.json_bag['meta']['freq_low_hz']        
-        project = payload.json_bag['project']
-        site = payload.json_bag['site']
+        bin_seconds = payload.json_bag["meta"]["time_stamp_epoch"]
+        freq_low_hz = payload.json_bag["meta"]["freq_low_hz"]
+        project = payload.json_bag["project"]
+        site = payload.json_bag["site"]
 
         return f"{self.cooked_dir}/{bin_seconds}-{freq_low_hz}-{project}.{site}"
 
@@ -56,16 +56,18 @@ class CsvJson:
     def json_writer(self, payload: MastodonRow, peaker_only_flag: bool) -> None:
         file_name = f"{self.file_name(payload)}.json"
 
-        del(payload.json_bag['meta']['time_stamp_dt']) # datetime is not json serializable
+        del payload.json_bag["meta"][
+            "time_stamp_dt"
+        ]  # datetime is not json serializable
 
         if peaker_only_flag:
             peakers_only = []
 
-            for sample in payload.json_bag['samples']:
+            for sample in payload.json_bag["samples"]:
                 if sample[3] is True:
                     peakers_only.append(sample)
 
-            payload.json_bag['samples'] = peakers_only
+            payload.json_bag["samples"] = peakers_only
 
         try:
             with open(file_name, "w") as out_file:
@@ -79,7 +81,7 @@ class CsvJson:
 
         try:
             with open(file_name, "w") as out_file:
-                for current in payload.json_bag['samples']:
+                for current in payload.json_bag["samples"]:
                     out_file.write(f"{current[0]}\t{current[1]}\t{current[2]}\n")
         except Exception as error:
             print(error)
@@ -119,7 +121,7 @@ class CsvJson:
 
         for target in targets:
             print(f"processing {target}")
-            
+
             if os.path.isfile(target) is False:
                 print(f"skipping {target}")
                 continue
@@ -143,11 +145,13 @@ class CsvJson:
             else:
                 os.unlink(target)
                 os.unlink(power_name)
+
+
 #                os.rename(target, self.processed_dir + "/" + target)
 #                os.rename(power_name, self.processed_dir + "/" + power_name)
 
-class MastodonDiagnostic:
 
+class MastodonDiagnostic:
     def execute(self, file_name: str) -> None:
         print(f"processing {file_name}")
 
@@ -159,17 +163,18 @@ class MastodonDiagnostic:
             "host": "host",
             "project": "project",
             "receiver": "receiver",
-            "site": "site"
+            "site": "site",
         }
 
         for current in buffer:
             row = MastodonRow(file_name, personality)
             row.row_meta(current[0:6])
-            print(row.json_bag['meta'])
+            print(row.json_bag["meta"])
 
-#/var/mellow/mastodon/diagnostic
 
-print("start dump_row_meta")#
+# /var/mellow/mastodon/diagnostic
+
+print("start dump_row_meta")  #
 
 #
 # argv[1] = csv filename
@@ -182,7 +187,7 @@ if __name__ == "__main__":
     else:
         print("need filename")
         exit(1)
-        
+
 print("stop dump_row_meta")
 
 # ;;; Local Variables: ***

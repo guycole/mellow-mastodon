@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Title: big-search01-vallejo.sh
+# Title: big-search01.sh
 # Description: mastodon collection (118M to 960M)
 # Development Environment: Ubuntu 22.04.05 LTS
 # Author: Guy Cole (guycole at gmail dot com)
@@ -24,7 +24,7 @@ UUID=$(uuidgen)
 #
 RTL_POWER="/usr/local/bin/rtl_power"
 #
-POWER_FILE_NAME="${UUID}"
+POWER_FILE_NAME="${UUID}.csv"
 #
 time $RTL_POWER -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION > /tmp/$POWER_FILE_NAME
 #

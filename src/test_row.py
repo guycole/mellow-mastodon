@@ -10,10 +10,10 @@ from mastodon_row import MastodonRow
 
 from unittest import TestCase
 
-class TestRow(TestCase):
 
+class TestRow(TestCase):
     def test1(self):
-        """ bad file name formats """
+        """bad file name formats"""
 
         result = None
 
@@ -24,7 +24,7 @@ class TestRow(TestCase):
             print(f"bad name 1: {error}")
 
         self.assertIsNone(result)
-    
+
         try:
             file_name = "bogus.bogus"
             result = MastodonRow("bogus.bogus")
@@ -34,7 +34,7 @@ class TestRow(TestCase):
         self.assertIsNone(result)
 
     def test2(self):
-        """ good file name formats """
+        """good file name formats"""
 
         result = None
 
@@ -47,27 +47,41 @@ class TestRow(TestCase):
         self.assertIsNotNone(result)
 
     def test3(self):
-        """ row meta and sample parsing """
+        """row meta and sample parsing"""
 
         file_name = "big-search-000774db-0f2d-47cc-b966-c52abb61a5ef.anderson1"
         result = MastodonRow(file_name)
 
-        row_data = ['2025-07-27', '20:36:05', '120772425', '123569849', '2731.86', '13', '-1.0', '-3.0', '-5.0', '-7.0', '-9.0']
+        row_data = [
+            "2025-07-27",
+            "20:36:05",
+            "120772425",
+            "123569849",
+            "2731.86",
+            "13",
+            "-1.0",
+            "-3.0",
+            "-5.0",
+            "-7.0",
+            "-9.0",
+        ]
         result.row_meta(row_data)
 
-        self.assertEqual(result._header['meta']['freq_low_hz'], 120772425)
-        self.assertEqual(result._header['meta']['freq_high_hz'], 123569849)
-        self.assertEqual(result._header['meta']['freq_step_hz'], 2731.86)
-        self.assertEqual(result._header['meta']['time_stamp_epoch'], 1753673765)
-        self.assertEqual(result._header['meta']['time_stamp_iso8601'], '2025-07-27T20:36:05')
-        self.assertEqual(result._header['meta']['sample_quantity'], 13)
+        self.assertEqual(result._header["meta"]["freq_low_hz"], 120772425)
+        self.assertEqual(result._header["meta"]["freq_high_hz"], 123569849)
+        self.assertEqual(result._header["meta"]["freq_step_hz"], 2731.86)
+        self.assertEqual(result._header["meta"]["time_stamp_epoch"], 1753673765)
+        self.assertEqual(
+            result._header["meta"]["time_stamp_iso8601"], "2025-07-27T20:36:05"
+        )
+        self.assertEqual(result._header["meta"]["sample_quantity"], 13)
 
         result.row_samples(row_data)
 
-        self.assertEqual(len(result._header['samples']), 5)
-        self.assertEqual(result._header['statistics']['avg_sample'], -5.0)
-        self.assertEqual(result._header['statistics']['min_sample'], -9.0)
-        self.assertEqual(result._header['statistics']['max_sample'], -1.0)
+        self.assertEqual(len(result._header["samples"]), 5)
+        self.assertEqual(result._header["statistics"]["avg_sample"], -5.0)
+        self.assertEqual(result._header["statistics"]["min_sample"], -9.0)
+        self.assertEqual(result._header["statistics"]["max_sample"], -1.0)
 
 
 #    def test4(self):

@@ -1,7 +1,0 @@
-{
-  "antenna": "whip",
-  "host": "rpi4d",
-  "project": "big-search01",
-  "receiver": "rtl-sdr-6",
-  "site": "vallejo1"
-}
