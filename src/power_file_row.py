@@ -8,23 +8,23 @@ import datetime
 import json
 
 class PowerFileRow:
-    def __init__(self, row: list[str]):
+    def __init__(self, raw_row: list[str]):
         # ['2025-05-16', ' 04:16:20', ' 966482608', ' 969275710', ' 2727.64']
         # "\tdate, time, Hz low, Hz high, Hz step, samples, dbm, dbm, ...
 
-        if len(row) < 6:
+        if len(raw_row) < 6:
             raise Exception("bad row len")
 
-        self.raw_row = row
+        self.raw_row = raw_row
         self.samples_list = []
         self.statistics_map = {}
 
-        row_date = row[0].split("-")
+        row_date = raw_row[0].split("-")
         yy = int(row_date[0])
         mm = int(row_date[1])
         dd = int(row_date[2])
 
-        row_time = row[1].split(":")
+        row_time = raw_row[1].split(":")
         hour = int(row_time[0])
         minute = int(row_time[1])
         second = int(row_time[2])
@@ -33,10 +33,10 @@ class PowerFileRow:
 
         self.meta_map = {
             "file_type": "mastodon-v1",
-            "freq_low_hz": int(row[2]),
-            "freq_high_hz": int(row[3]),
-            "freq_step_hz": float(row[4]),
-            "sample_quantity": int(row[5]),
+            "freq_low_hz": int(raw_row[2]),
+            "freq_high_hz": int(raw_row[3]),
+            "freq_step_hz": float(raw_row[4]),
+            "sample_quantity": int(raw_row[5]),
             "time_stamp_dt": dt,
             "time_stamp_epoch": int(dt.timestamp()),
             "time_stamp_iso8601": dt.isoformat()

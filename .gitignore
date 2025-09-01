@@ -176,4 +176,6 @@ cython_debug/
 *~
 
 src/config.yaml
-test/big-search-e51eb6f4-468c-40d1-89e4-772a4c870a65.anderson1
+test/6bfb30ca-0276-4607-bcc4-5eec24880dce.csv
+test/9cb504d0-4a3b-4568-b6e9-83b58a260440.csv
+test/ac6379b2-caa4-4375-9802-f5b4d1828f81.csv

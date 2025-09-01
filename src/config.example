@@ -10,6 +10,7 @@ failureDir: /var/mellow/mastodon/failure
 #
 # repository of freshly collected observations
 freshDir: /var/mellow/mastodon/fresh
+#freshDir: /Users/gsc/Documents/github/mellow-mastodon/test
 #
 # processed artifacts
 processedDir: /var/mellow/mastodon/processed
@@ -17,20 +18,11 @@ processedDir: /var/mellow/mastodon/processed
 # row artifacts
 rowDir: /var/mellow/mastodon/row
 #
-# test artifacts
-testDir: /Users/gsc/Documents/github/mellow-mastodon/test
-#
 # database connection
 dbConn: "postgresql+psycopg2://mastodon_py:bogus@localhost:5432/mastodon_v1"
 #
 # true, echo SQL statements
 sqlEchoEnable: true
-#
-# true JSON output is only peakers else all bins
-peakerOnly: true
-#
-# true, enable test mode
-testModeEnable: true
 #
 # collection antenna
 #antenna: discone1
