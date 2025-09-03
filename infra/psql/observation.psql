@@ -1,0 +1,18 @@
+--
+-- Title: observation.psql
+-- Description: sample
+--
+create table mastodon_v1.observation (
+  id                bigserial  primary key,
+  freq_hz           int        not null,
+  load_log_id       bigint     not null,
+  constraint load_lg_id foreign key(load_log_id) references mastodon_v1.load_log(id),
+  rolling_mean      real       not null,
+  signal_dbm        real       not null,
+  time_stamp_epoch  bigint     not null
+) tablespace mastodon;
+
+grant select, insert, update, delete on mastodon_v1.observation to mastodon_client;
+grant usage, select on sequence mastodon_v1.observation_id_seq to mastodon_client;
+
+create unique index obs_freq_ts on mastodon_v1.observation(freq_hz, time_stamp_epoch);

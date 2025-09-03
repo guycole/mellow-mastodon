@@ -11,6 +11,7 @@ DST_BUCKET=s3://mellow-mastodon-uw2-m7766.braingang.net/archive/
 SRC_BUCKET=s3://mellow-mastodon-uw2-m7766.braingang.net/fresh/
 #
 ARCHIVE_DIR="/var/mellow/mastodon/archive"
+PROCESSED_DIR="/var/mellow/mastodon/processed"
 WORK_DIR="/var/mellow/mastodon"
 #
 echo "start move"
@@ -24,7 +25,7 @@ do
       aws s3 cp $SRC_BUCKET$file_name . --profile=wombat03rw
       aws s3 mv $SRC_BUCKET$file_name $DST_BUCKET$file_name --profile=wombat03rw
       tar -xzf $file_name
-      mv $file_name $ARCHIVE_DIR
+      mv $file_name $PROCESSED_DIR
     fi
   fi
 

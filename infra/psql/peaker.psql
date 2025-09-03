@@ -1,0 +1,20 @@
+--
+-- Title: peaker.psql
+-- Description: peaker observation
+--
+create table mastodon_v1.peaker (
+  id          bigserial  primary key,
+  freq_hz     int        not null,
+  obs_first   timestamp  not null default CURRENT_TIMESTAMP,
+  obs_last    timestamp  not null default CURRENT_TIMESTAMP,  
+  population  bigint     not null,
+  site_id     bigint     not null,
+  constraint site_id foreign key(site_id) references mastodon_v1.site(id)
+) tablespace mastodon;
+
+grant select, insert, update, delete on mastodon_v1.peaker to mastodon_client;
+grant usage, select on sequence mastodon_v1.peaker_id_seq to mastodon_client;
+
+create unique index peaker_freq_site on mastodon_v1.peaker(freq_hz, site_id);
+
+-- needs case notation

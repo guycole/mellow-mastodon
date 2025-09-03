@@ -10,7 +10,8 @@ export PGHOST=localhost
 export PGPASSWORD=woofwoof
 export PGUSER=mastodon_admin
 #
-psql $PGDATABASE -c "drop table mastodon_v1.bin_sample"
-psql $PGDATABASE -c "drop table mastodon_v1.row_header"
+psql $PGDATABASE -c "drop table mastodon_v1.observation"
 psql $PGDATABASE -c "drop table mastodon_v1.load_log"
+psql $PGDATABASE -c "drop table mastodon_v1.peaker"
+psql $PGDATABASE -c "drop table mastodon_v1.site"
 #

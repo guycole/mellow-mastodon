@@ -1,0 +1,24 @@
+--
+-- Title: site.psql
+-- Description: collection site location and equipment
+--
+create table mastodon_v1.site (
+  id         bigserial     primary key,
+  altitude   real          not null,
+  antenna    varchar(16)   not null,
+  latitude   real          not null,
+  longitude  real          not null,
+  name       varchar(16)   unique not null,
+  note       varchar(132)  not null default 'noNote',
+  project    varchar(16)   not null,
+  receiver   varchar(16)   not null
+) tablespace mastodon;
+
+grant select, insert, update, delete on mastodon_v1.site to mastodon_client;
+grant usage, select on sequence mastodon_v1.site_id_seq to mastodon_client;
+
+-- anderson1
+insert into mastodon_v1.site(altitude, antenna, latitude, longitude, name, project, receiver) values(12.3, 'discone1', 40.41746, -122.24048, 'anderson1', 'big-search01', 'rtl-sdr-14');
+
+-- vallejo1
+insert into mastodon_v1.site(altitude, antenna, latitude, longitude, name, project, receiver) values(12.3, 'discone2', 38.10812, -122.26794, 'vallejo1', 'big-search01', 'rtl-sdr-5');
