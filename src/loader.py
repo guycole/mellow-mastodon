@@ -11,13 +11,12 @@ import sys
 import yaml
 from yaml.loader import SafeLoader
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+#from sqlalchemy import create_engine
+#from sqlalchemy.orm import sessionmaker
 
-import postgres
+#import postgres
 
 from converter import Converter
-
 
 class Loader:
     def __init__(self, configuration: dict[str, str]):
@@ -28,14 +27,14 @@ class Loader:
         self.fresh_dir = configuration["freshDir"]
         self.sql_echo = configuration["sqlEchoEnable"]
 
-        connect_dict = {"options": "-csearch_path={}".format("mastodon_v1")}
-        db_engine = create_engine(
-            self.db_conn, echo=self.sql_echo, connect_args=connect_dict
-        )
+#        connect_dict = {"options": "-csearch_path={}".format("mastodon_v1")}
+#        db_engine = create_engine(
+#            self.db_conn, echo=self.sql_echo, connect_args=connect_dict
+#        )
 
-        self.postgres = postgres.PostGres(
-            sessionmaker(bind=db_engine, expire_on_commit=False)
-        )
+#        self.postgres = postgres.PostGres(
+#            sessionmaker(bind=db_engine, expire_on_commit=False)
+#        )
 
         self.failure_counter = 0
         self.success_counter = 0
@@ -56,8 +55,8 @@ class Loader:
         os.rename(file_name, self.failure_dir + "/" + file_name)
 
     def execute(self) -> None:
-        print(f"cooked  dir:{self.cooked_dir}")
-        os.chdir(self.cooked_dir)
+        print(f"fresh dir:{self.fresh_dir}")
+        os.chdir(self.fresh_dir)
 
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
@@ -69,8 +68,10 @@ class Loader:
                 print(f"skipping {target}")
                 continue
 
-            # test for duplicate file
+            converter = Converter(target)
+            converter.converter()
 
+            # test for duplicate file
 
 #            selected = self.postgres.load_log_select_by_file_name(target)
 # 3            if selected is not None:

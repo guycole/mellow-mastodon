@@ -10,6 +10,7 @@ export PGHOST=localhost
 export PGPASSWORD=woofwoof
 export PGUSER=mastodon_admin
 #
+psql < equipment.psql
 psql < site.psql
 psql < load_log.psql
 psql < peaker.psql

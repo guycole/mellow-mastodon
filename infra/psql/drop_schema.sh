@@ -14,4 +14,5 @@ psql $PGDATABASE -c "drop table mastodon_v1.observation"
 psql $PGDATABASE -c "drop table mastodon_v1.load_log"
 psql $PGDATABASE -c "drop table mastodon_v1.peaker"
 psql $PGDATABASE -c "drop table mastodon_v1.site"
+psql $PGDATABASE -c "drop table mastodon_v1.equipment"
 #
