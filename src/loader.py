@@ -11,12 +11,12 @@ import sys
 import yaml
 from yaml.loader import SafeLoader
 
-#from sqlalchemy import create_engine
-#from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-#import postgres
+import postgres
 
-from converter import Converter
+from mastodon_file import MastodonFile
 
 class Loader:
     def __init__(self, configuration: dict[str, str]):
@@ -27,14 +27,14 @@ class Loader:
         self.fresh_dir = configuration["freshDir"]
         self.sql_echo = configuration["sqlEchoEnable"]
 
-#        connect_dict = {"options": "-csearch_path={}".format("mastodon_v1")}
-#        db_engine = create_engine(
-#            self.db_conn, echo=self.sql_echo, connect_args=connect_dict
-#        )
+        connect_dict = {"options": "-csearch_path={}".format("mastodon_v1")}
+        db_engine = create_engine(
+            self.db_conn, echo=self.sql_echo, connect_args=connect_dict
+        )
 
-#        self.postgres = postgres.PostGres(
-#            sessionmaker(bind=db_engine, expire_on_commit=False)
-#        )
+        self.postgres = postgres.PostGres(
+            sessionmaker(bind=db_engine, expire_on_commit=False)
+        )
 
         self.failure_counter = 0
         self.success_counter = 0
@@ -55,6 +55,8 @@ class Loader:
         os.rename(file_name, self.failure_dir + "/" + file_name)
 
     def execute(self) -> None:
+        mastodon_file = MastodonFile(self.postgres)
+
         print(f"fresh dir:{self.fresh_dir}")
         os.chdir(self.fresh_dir)
 
@@ -63,57 +65,13 @@ class Loader:
 
         for target in targets:
             print(f"processing {target}")
+            print(type(self.postgres))
 
             if os.path.isfile(target) is False:
                 print(f"skipping {target}")
                 continue
 
-            converter = Converter(target)
-            converter.converter()
-
-            # test for duplicate file
-
-#            selected = self.postgres.load_log_select_by_file_name(target)
-# 3            if selected is not None:
-#                print(f"skip duplicate file:{target}")
-#                self.file_failure(target)
-#                continue
-
-# process file
-#            converter = Converter()
-#            if converter.converter(target) is False:
-##                print(f"converter failure noted:{target}")
-#                self.file_failure(target)
-#                continue
-
-#            start_time_stamp = datetime.datetime.now()
-
-#            load_log = self.postgres.load_log_insert(converter.get_load_log())
-#            print(f"load_log {target}")
-
-#            converted = converter.get_converted()
-#            counter = 1
-#            for row in converted["rows"]:
-#                print(".", end=" ", flush=True)
-
-#                print(f"{counter}", end='\r')
-#                counter += 1
-
-#                rh = converter.get_row_header(row, load_log.id)
-#                row_header = self.postgres.row_header_insert(rh)
-
-#                self.postgres.bin_sample_bulk_insert(row["bin_samples"], row_header.id)
-
-#            print("")
-
-#            self.file_success(target)
-
-#            stop_time_stamp = datetime.datetime.now()
-#            duration = stop_time_stamp - start_time_stamp
-#            print(f"duration {duration.seconds} seconds")
-
-#        print(f"success:{self.success_counter} failure:{self.failure_counter}")
-
+            status = mastodon_file.processor(target)
 
 print("start loader")
 

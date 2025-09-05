@@ -13,6 +13,6 @@ export PGUSER=mastodon_admin
 psql < equipment.psql
 psql < site.psql
 psql < load_log.psql
-psql < peaker.psql
+psql < population.psql
 psql < observation.psql
 #
