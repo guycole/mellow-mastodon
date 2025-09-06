@@ -23,6 +23,7 @@ mapper_registry = registry()
 class Base(DeclarativeBase):
     pass
 
+
 class Equipment(Base):
     """equipment table definition"""
 
@@ -43,6 +44,7 @@ class Equipment(Base):
     def __repr__(self):
         return f"equipment({self.project})"
 
+
 class LoadLog(Base):
     """load_log table definition"""
 
@@ -51,7 +53,7 @@ class LoadLog(Base):
     id = Column(Integer, primary_key=True)
     file_name = Column(String)
     file_type = Column(String)
-    time_stamp_epoch = Column(BigInteger) 
+    time_stamp_epoch = Column(BigInteger)
     project = Column(String)
     equipment_id = Column(BigInteger)
     site_id = Column(BigInteger)
@@ -66,6 +68,7 @@ class LoadLog(Base):
 
     def __repr__(self):
         return f"load_log({self.file_name} {self.time_stamp_epoch})"
+
 
 class Observation(Base):
     """observation table definition"""
@@ -83,9 +86,10 @@ class Observation(Base):
         self.load_log_id = args["load_log_id"]
         self.rolling_mean = args["rolling_mean"]
         self.signal_dbm = args["signal_dbm"]
-    
+
     def __repr__(self):
         return f"observation({self.freq_hz} {self.signal_dbm} {self.load_log_id})"
+
 
 class Population(Base):
     """peaker table definition"""
@@ -108,7 +112,8 @@ class Population(Base):
 
     def __repr__(self):
         return f"peaker({self.site_id} {self.freq_hz} {self.population})"
-    
+
+
 class Site(Base):
     """site table definition"""
 
@@ -130,6 +135,7 @@ class Site(Base):
 
     def __repr__(self):
         return f"site({self.name})"
+
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***

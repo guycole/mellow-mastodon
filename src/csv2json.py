@@ -60,10 +60,13 @@ class CsvJson:
             power_epoch_map = power_file.parser(target)
             for key in power_epoch_map.keys():
                 # peakers by epoch time sorted by frequency
-                peaker_list = power_epoch_map[key].peakers(self.half_window_size, self.cooked_dir)
+                peaker_list = power_epoch_map[key].peakers(
+                    self.half_window_size, self.cooked_dir
+                )
                 power_file.json_writer(key, self.archive_dir, peaker_list)
 
             os.rename(target, self.processed_dir + "/" + target)
+
 
 print("start csv2json")
 

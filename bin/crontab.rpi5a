@@ -1,0 +1,17 @@
+#
+# heeler
+17 03 * * 3 /home/gsc/Documents/github/mellow-heeler/bin/full-cycle.sh > /dev/null 2>&1
+17 12 * * 3 /home/gsc/Documents/github/mellow-heeler/bin/wombat03-to-s3.sh > /dev/null 2>&1
+17 03 * * 6 /home/gsc/Documents/github/mellow-heeler/bin/full-cycle.sh > /dev/null 2>&1
+17 12 * * 6 /home/gsc/Documents/github/mellow-heeler/bin/wombat03-to-s3.sh > /dev/null 2>&1
+#
+# hyena
+11 03 * * 0 /home/gsc/Documents/github/mellow-hyena/bin/full-cycle.sh > /dev/null 2>&1
+11 12 * * 0 /home/gsc/Documents/github/mellow-hyena/bin/wombat03-to-s3.sh > /dev/null 2>&1
+11 03 * * 4 /home/gsc/Documents/github/mellow-hyena/bin/full-cycle.sh > /dev/null 2>&1
+11 12 * * 4 /home/gsc/Documents/github/mellow-hyena/bin/wombat03-to-s3.sh > /dev/null 2>&1
+#
+# mastodon
+13 09 * * * /home/gsc/Documents/github/mellow-mastodon/bin/fresh-from-s3.sh > /dev/null 2>&1
+21 09 * * * /home/gsc/Documents/github/mellow-mastodon/bin/loader.sh > /dev/null 2>&1
+#

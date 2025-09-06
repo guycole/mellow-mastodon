@@ -6,6 +6,7 @@
 #
 import datetime
 import os
+import shutil
 import sys
 
 import yaml
@@ -18,11 +19,11 @@ import postgres
 
 from mastodon_file import MastodonFile
 
+
 class Loader:
     def __init__(self, configuration: dict[str, str]):
         self.db_conn = configuration["dbConn"]
         self.archive_dir = configuration["archiveDir"]
-        self.cooked_dir = configuration["cookedDir"]
         self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
         self.sql_echo = configuration["sqlEchoEnable"]
@@ -44,7 +45,7 @@ class Loader:
 
         self.success_counter += 1
 
-        os.rename(file_name, self.archive_dir + "/" + file_name)
+        os.unlink(file_name)
 
     def file_failure(self, file_name: str):
         """problem file, retain for review"""
@@ -52,7 +53,9 @@ class Loader:
         self.failure_counter += 1
 
         print(f"failure move for {file_name}")
-        os.rename(file_name, self.failure_dir + "/" + file_name)
+
+        shutil.move(file_name, self.failure_dir + "/" + file_name)
+        # os.rename(file_name, self.failure_dir + "/" + file_name)
 
     def execute(self) -> None:
         mastodon_file = MastodonFile(self.postgres)
@@ -65,13 +68,19 @@ class Loader:
 
         for target in targets:
             print(f"processing {target}")
-            print(type(self.postgres))
 
             if os.path.isfile(target) is False:
                 print(f"skipping {target}")
                 continue
 
             status = mastodon_file.processor(target)
+            if status is True:
+                self.file_success(target)
+            else:
+                self.file_failure(target)
+
+        print(f"success:{self.success_counter} failure:{self.failure_counter}")
+
 
 print("start loader")
 

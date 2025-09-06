@@ -13,7 +13,7 @@ from sqlalchemy import and_
 from sqlalchemy import func
 from sqlalchemy import select
 
-from sql_table import Equipment, LoadLog, Observation, Population, Site 
+from sql_table import Equipment, LoadLog, Observation, Population, Site
 
 
 class PostGres:
@@ -23,9 +23,15 @@ class PostGres:
     def __init__(self, session: sqlalchemy.orm.session.sessionmaker):
         self.Session = session
 
-    def equipment_select(self, antenna:str, project:str, receiver:str) -> Equipment:
+    def equipment_select(self, antenna: str, project: str, receiver: str) -> Equipment:
         with self.Session() as session:
-            return session.scalars(select(Equipment).filter_by(antenna=antenna, project=project, receiver=receiver,)).first()
+            return session.scalars(
+                select(Equipment).filter_by(
+                    antenna=antenna,
+                    project=project,
+                    receiver=receiver,
+                )
+            ).first()
 
     def load_log_insert(self, args: dict[str, any]) -> LoadLog:
         candidate = LoadLog(args)
@@ -39,14 +45,15 @@ class PostGres:
 
         return candidate
 
-
     def load_log_select_by_file_name(self, file_name: str) -> LoadLog:
         with self.Session() as session:
-            return session.scalars(select(LoadLog).filter_by(file_name=file_name)).first()
+            return session.scalars(
+                select(LoadLog).filter_by(file_name=file_name)
+            ).first()
 
     def observation_insert(self, args: dict[str, any]) -> Observation:
         candidate = Observation(args)
-        
+
         try:
             with self.Session() as session:
                 session.add(candidate)
@@ -72,9 +79,13 @@ class PostGres:
         with self.Session() as session:
             return session.scalars(select(Population).filter_by(freq_hz=freq_hz)).all()
 
-    def population_select_by_frequency_site_id(self, freq_hz: int, site_id:int) -> list[Population]:
+    def population_select_by_frequency_site_id(
+        self, freq_hz: int, site_id: int
+    ) -> list[Population]:
         with self.Session() as session:
-            return session.scalars(select(Population).filter_by(freq_hz=freq_hz, site_id=site_id)).all()
+            return session.scalars(
+                select(Population).filter_by(freq_hz=freq_hz, site_id=site_id)
+            ).all()
 
     def population_select_by_id(self, id: int) -> Population:
         with self.Session() as session:
@@ -87,7 +98,7 @@ class PostGres:
                 session.commit()
         except Exception as error:
             print(error)
-        
+
     def site_select_by_id(self, id: int) -> Site:
         with self.Session() as session:
             return session.scalars(select(Site).filter_by(id=id)).first()
@@ -96,7 +107,6 @@ class PostGres:
         with self.Session() as session:
             return session.scalars(select(Site).filter_by(name=name)).first()
 
-
     #    def load_log_select_all(self) -> list[LoadLog]:
     #        with self.Session() as session:
     #            return session.scalars(select(LoadLog)).all()
@@ -104,6 +114,7 @@ class PostGres:
     #    def load_log_select_by_file_date(self, target: datetime) -> list[LoadLog]:
     #        with self.Session() as session:
     #            return session.scalars(select(LoadLog).filter_by(file_date=target)).all()
+
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***
