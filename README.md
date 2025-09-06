@@ -10,7 +10,7 @@ Collecting samples over time allows discovery of frequencies in active use, whic
 ## Deployment
 Deployment can be a single machine or multiple boxes.
 
-![deployment](https://github.com/guycole/mellow-heeler/blob/master/md-uml/heeler-deployment.png)
+![deployment](https://github.com/guycole/mellow-mastodon/blob/main/md-uml/deployment.png)
 
 ## Collection
 Collection devices consist of a [Raspberry Pi](https://www.raspberrypi.org/) connected to a [rtl-sdr](https://osmocom.org/projects/rtl-sdr/wiki/rtl-sdr).  The [rtl-power](https://github.com/osmocom/rtl-sdr) utility is employed to collect spectrum samples, see [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh).  The output file is too large to be easily transferred to 
