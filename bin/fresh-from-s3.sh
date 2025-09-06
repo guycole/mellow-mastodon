@@ -11,25 +11,28 @@ DST_BUCKET=s3://mellow-mastodon-uw2-m7766.braingang.net/archive/
 SRC_BUCKET=s3://mellow-mastodon-uw2-m7766.braingang.net/fresh/
 #
 ARCHIVE_DIR="/var/mellow/mastodon/archive"
+FRESH_DIR="/var/mellow/mastodon/fresh"
 WORK_DIR="/var/mellow/mastodon"
+#
+S3_LIST="/tmp/s3list.txt"
+PP1_ARCHIVE_DIR="/mnt/pp1/gsc/mellow/mastodon/archive"
 #
 echo "start move"
 cd $WORK_DIR
 #
-counter=0
-for file_name in $(aws s3 ls $SRC_BUCKET --profile wombat03rw); 
-do
-  if (( counter % 6 == 0 )); then
-    if (( counter > 0 )); then
-      aws s3 cp $SRC_BUCKET$file_name . --profile=wombat03rw
-      aws s3 mv $SRC_BUCKET$file_name $DST_BUCKET$file_name --profile=wombat03rw
-      tar -xzf $file_name
-      mv $file_name $ARCHIVE_DIR
-    fi
+rm $S3_LIST
+aws s3 ls $SRC_BUCKET --profile wombat03rw | cut -c 32-80 > /tmp/s3list.txt
+#
+while IFS= read -r file_name; do
+  if [[ -z "$file_name" ]]; then
+    echo "skipping empty string"
+  else
+    aws s3 cp $SRC_BUCKET$file_name . --profile=wombat03rw
+    aws s3 mv $SRC_BUCKET$file_name $DST_BUCKET$file_name --profile=wombat03rw
+    tar -xzf $file_name
+    mv $file_name $PP1_ARCHIVE_DIR
   fi
-
-  ((counter++))
-done
-
+done < "$S3_LIST"
+#
 echo "end move"
 #

@@ -6,6 +6,7 @@
 #
 import csv
 
+
 class PowerFileHelper:
     def csv_file_reader(self, file_name: str) -> list[str]:
         """read mastodon csv file and return list of rows"""

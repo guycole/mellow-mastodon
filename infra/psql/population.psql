@@ -1,0 +1,18 @@
+--
+-- Title: population.psql
+-- Description: peaker report
+--
+create table mastodon_v1.population (
+  id          bigserial  primary key,
+  freq_hz     int        not null,
+  obs_first   timestamp  not null default CURRENT_TIMESTAMP,
+  obs_last    timestamp  not null default CURRENT_TIMESTAMP,  
+  population  bigint     not null,
+  site_id     bigint     not null,
+  constraint site_id foreign key(site_id) references mastodon_v1.site(id)
+) tablespace mastodon;
+
+grant select, insert, update, delete on mastodon_v1.population to mastodon_client;
+grant usage, select on sequence mastodon_v1.population_id_seq to mastodon_client;
+
+create unique index pop_freq_site on mastodon_v1.population(freq_hz, site_id);

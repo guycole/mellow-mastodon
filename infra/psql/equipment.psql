@@ -1,0 +1,20 @@
+--
+-- Title: equipment.psql
+-- Description: collection equipment
+--
+create table mastodon_v1.equipment (
+  id         bigserial     primary key,
+  antenna    varchar(16)   not null,
+  note       varchar(132)  not null default 'noNote',
+  project    varchar(16)   not null,
+  receiver   varchar(16)   not null
+) tablespace mastodon;
+
+grant select, insert, update, delete on mastodon_v1.equipment to mastodon_client;
+grant usage, select on sequence mastodon_v1.equipment_id_seq to mastodon_client;
+
+-- anderson1
+insert into mastodon_v1.equipment(antenna, project, receiver) values('discone1', 'big-search01', 'rtl-sdr-14');
+
+-- vallejo1
+insert into mastodon_v1.equipment(antenna, project, receiver) values('discone2', 'big-search01', 'rtl-sdr-5');

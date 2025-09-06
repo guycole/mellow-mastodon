@@ -24,29 +24,25 @@ class Base(DeclarativeBase):
     pass
 
 
-class BinSample(Base):
-    """bin_sample table definition"""
+class Equipment(Base):
+    """equipment table definition"""
 
-    __tablename__ = "bin_sample"
+    __tablename__ = "equipment"
 
     id = Column(Integer, primary_key=True)
-    bin_ndx = Column(Integer)
-    freq_hz = Column(Integer)
-    peaker_flag = Column(Boolean)
-    rolling_mean = Column(Float)
-    row_head_id = Column(BigInteger)
-    signal_dbm = Column(Float)
+    antenna = Column(String)
+    note = Column(String)
+    project = Column(String)
+    receiver = Column(String)
 
     def __init__(self, args: dict[str, any]):
-        self.bin_ndx = args["bin_ndx"]
-        self.freq_hz = args["freq_hz"]
-        self.peaker_flag = args["peaker_flag"]
-        self.rolling_mean = args["rolling_mean"]
-        self.row_head_id = args["row_head_id"]
-        self.signal_dbm = args["signal_dbm"]
+        self.antenna = args["antenna"]
+        self.note = args["note"]
+        self.project = args["project"]
+        self.receiver = args["receiver"]
 
     def __repr__(self):
-        return f"bin_sample({self.row_id} {self.bin_ndx})"
+        return f"equipment({self.project})"
 
 
 class LoadLog(Base):
@@ -57,54 +53,88 @@ class LoadLog(Base):
     id = Column(Integer, primary_key=True)
     file_name = Column(String)
     file_type = Column(String)
-    freq_mhz_low = Column(Integer)
-    freq_mhz_high = Column(Integer)
-    first_row_date = Column(Date)
-    first_row_time = Column(DateTime)
+    time_stamp_epoch = Column(BigInteger)
     project = Column(String)
-    site = Column(String)
+    equipment_id = Column(BigInteger)
+    site_id = Column(BigInteger)
 
     def __init__(self, args: dict[str, any]):
         self.file_name = args["file_name"]
         self.file_type = args["file_type"]
-        self.freq_mhz_low = args["freq_mhz_low"]
-        self.freq_mhz_high = args["freq_mhz_high"]
-        self.first_row_date = args["first_row_date"]
-        self.first_row_time = args["first_row_time"]
+        self.time_stamp_epoch = args["time_stamp_epoch"]
         self.project = args["project"]
-        self.site = args["site"]
+        self.equipment_id = args["equipment_id"]
+        self.site_id = args["site_id"]
 
     def __repr__(self):
-        return f"load_log({self.file_name} {self.first_row_time})"
+        return f"load_log({self.file_name} {self.time_stamp_epoch})"
 
 
-class RowHeader(Base):
-    """row_header table definition"""
+class Observation(Base):
+    """observation table definition"""
 
-    __tablename__ = "row_header"
+    __tablename__ = "observation"
 
     id = Column(Integer, primary_key=True)
-    bin_quantity = Column(Integer)
-    freq_hz_low = Column(Integer)
-    freq_hz_high = Column(Integer)
-    freq_hz_step = Column(Float)
+    freq_hz = Column(Integer)
     load_log_id = Column(BigInteger)
-    row_date = Column(Date)
-    row_time = Column(DateTime)
-    sample_quantity = Column(Integer)
+    rolling_mean = Column(Float)
+    signal_dbm = Column(Float)
 
     def __init__(self, args: dict[str, any]):
-        self.bin_quantity = args["bin_quantity"]
-        self.freq_hz_low = args["freq_hz_low"]
-        self.freq_hz_high = args["freq_hz_high"]
-        self.freq_hz_step = args["freq_hz_step"]
+        self.freq_hz = args["freq_hz"]
         self.load_log_id = args["load_log_id"]
-        self.row_date = args["row_date"]
-        self.row_time = args["row_time"]
-        self.sample_quantity = args["sample_quantity"]
+        self.rolling_mean = args["rolling_mean"]
+        self.signal_dbm = args["signal_dbm"]
 
     def __repr__(self):
-        return f"row_header({self.load_log_id} {self.freq_hz_low} {self.freq_hz_high})"
+        return f"observation({self.freq_hz} {self.signal_dbm} {self.load_log_id})"
+
+
+class Population(Base):
+    """peaker table definition"""
+
+    __tablename__ = "population"
+
+    id = Column(Integer, primary_key=True)
+    freq_hz = Column(Integer)
+    obs_first = Column(DateTime)
+    obs_last = Column(DateTime)
+    population = Column(BigInteger)
+    site_id = Column(BigInteger)
+
+    def __init__(self, args: dict[str, any]):
+        self.freq_hz = args["freq_hz"]
+        self.obs_first = args["obs_first"]
+        self.obs_last = args["obs_last"]
+        self.population = args["population"]
+        self.site_id = args["site_id"]
+
+    def __repr__(self):
+        return f"peaker({self.site_id} {self.freq_hz} {self.population})"
+
+
+class Site(Base):
+    """site table definition"""
+
+    __tablename__ = "site"
+
+    id = Column(Integer, primary_key=True)
+    altitude = Column(Float)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    name = Column(String)
+    note = Column(String)
+
+    def __init__(self, args: dict[str, any]):
+        self.altitude = args["altitude"]
+        self.latitude = args["latitude"]
+        self.longitude = args["longitude"]
+        self.name = args["name"]
+        self.note = args["note"]
+
+    def __repr__(self):
+        return f"site({self.name})"
 
 
 # ;;; Local Variables: ***

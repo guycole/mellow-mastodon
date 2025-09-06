@@ -10,30 +10,33 @@ from power_file_epoch import PowerFileEpoch
 from power_file_helper import PowerFileHelper
 from power_file_row import PowerFileRow
 
+
 class PowerFile:
     def __init__(self, antenna: str, project: str, receiver: str, site: str):
-      
+
         self.meta_map = {
             "antenna": antenna,
             "file_type": "mastodon-v1",
             "project": project,
             "receiver": receiver,
             "site": site,
-            "time_stamp_epoch": 0
+            "time_stamp_epoch": 0,
         }
 
     def __str__(self):
         return f"PowerFile: {self.meta_map['time_stamp_epoch']}"
 
-    def json_writer(self, time_stamp_epoch: int, archive_dir: str, peakers_list: list[tuple [int, float, float]]) -> None:
-        self.meta_map['time_stamp_epoch'] = time_stamp_epoch
+    def json_writer(
+        self,
+        time_stamp_epoch: int,
+        archive_dir: str,
+        peakers_list: list[tuple[int, float, float]],
+    ) -> None:
+        self.meta_map["time_stamp_epoch"] = time_stamp_epoch
 
         file_name = f"{archive_dir}/{self.meta_map['project']}-{self.meta_map['time_stamp_epoch']}-{self.meta_map['site']}.json"
 
-        payload = {
-            "meta": self.meta_map,
-            "peakers": peakers_list
-        }
+        payload = {"meta": self.meta_map, "peakers": peakers_list}
 
         try:
             with open(file_name, "w") as out_file:
@@ -41,7 +44,7 @@ class PowerFile:
         except Exception as error:
             print(error)
 
-    def parser(self, file_name:str) -> dict[int, PowerFileEpoch]:
+    def parser(self, file_name: str) -> dict[int, PowerFileEpoch]:
         """read csv file and convert each row"""
 
         # read all rows of csv file

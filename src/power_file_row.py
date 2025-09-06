@@ -7,6 +7,7 @@
 import datetime
 import json
 
+
 class PowerFileRow:
     def __init__(self, raw_row: list[str]):
         # ['2025-05-16', ' 04:16:20', ' 966482608', ' 969275710', ' 2727.64']
@@ -39,7 +40,7 @@ class PowerFileRow:
             "sample_quantity": int(raw_row[5]),
             "time_stamp_dt": dt,
             "time_stamp_epoch": int(dt.timestamp()),
-            "time_stamp_iso8601": dt.isoformat()
+            "time_stamp_iso8601": dt.isoformat(),
         }
 
     def __str__(self):
@@ -99,7 +100,7 @@ class PowerFileRow:
         except Exception as error:
             print(error)
 
-    # timestamp-frequency.json i.e. 1756358045-159936375.json 
+    # timestamp-frequency.json i.e. 1756358045-159936375.json
     def json_writer(self, row_dir: str) -> None:
         file_name = f"{self.file_name(row_dir)}.json"
 
