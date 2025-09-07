@@ -7,6 +7,9 @@ rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a valu
 
 Collecting samples over time allows discovery of frequencies in active use, which can be revisted with other applications for further analysis or simply logged for continuity.
 
+## Sample energy plot with emitter at 169.55 MHz
+![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png)
+
 ## Deployment
 Deployment can be a single machine or multiple boxes.
 
