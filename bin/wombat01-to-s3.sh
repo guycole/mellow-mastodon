@@ -7,33 +7,17 @@
 #
 PATH=/bin:/usr/bin:/etc:/usr/local/bin:/opt/homebrew/bin/aws; export PATH
 #
-if [[ $# -eq 0 ]] ; then
-    echo "missing project-site argument"
-    exit 1
-fi
-#
-TODAY=$(date '+%Y-%m-%d')
-FILE_NAME="$1-${TODAY}.tgz"
-#
 DEST_BUCKET=s3://mellow-mastodon-uw2-m7766.braingang.net/fresh/
 #
-ARCHIVE_DIR="archive"
-COOKED_DIR="cooked"
+EXPORT_DIR="export"
 PROCESSED_DIR="processed"
+SOURCE_DIR="cooked"
 WORK_DIR="/var/mellow/mastodon"
 #
-echo "start archive for $FILE_NAME"
-#
-cd ${WORK_DIR}
-#
-tar -cvzf ${FILE_NAME} ${ARCHIVE_DIR}
+cd ${WORK_DIR}/${EXPORT_DIR}
 #
 echo "start s3 transfer" 
-aws s3 mv ${FILE_NAME} $DEST_BUCKET --profile=wombat01
-#
-echo "cleanup"
-rm -rf ${ARCHIVE_DIR}
-mkdir ${ARCHIVE_DIR}
+aws s3 mv . $DEST_BUCKET --recursive --profile=wombat01
 #
 echo "end archive"
 #
