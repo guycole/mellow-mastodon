@@ -19,6 +19,15 @@ Collection devices consist of a [Raspberry Pi](https://www.raspberrypi.org/) con
 ## Back End
 The database host reads collection files from AWS S3 and invokes [loader.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/loader.sh) to read csv2json files into PostgreSQL.
 
+## Artifacts
+Samples of mastodon files
+	1. [rtl_power CSV file (truncated)]()
+	1. [rtl_power CSV file (full)]()
+	1. [mastodon csv2json row file]()
+	1. [mastodon csv2json gnuplot data file]()
+	1. [mastodon peakers only file]()
+	1. [mastodon database dump of population table]()
+
 ## History
 Mastodon replaces the obsolete [Mellow Elephant](https://github.com/guycole/mellow-elephant)
 
