@@ -21,12 +21,12 @@ The database host reads collection files from AWS S3 and invokes [loader.sh](htt
 
 ## Artifacts
 Samples of mastodon files
-	1. [rtl_power CSV file (truncated)]()
-	1. [rtl_power CSV file (full)]()
-	1. [mastodon csv2json row file]()
-	1. [mastodon csv2json gnuplot data file]()
-	1. [mastodon peakers only file]()
-	1. [mastodon database dump of population table]()
+- [rtl_power CSV file (truncated)](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv)
+- [rtl_power CSV file (full)](https://github.com/guycole/mellow-mastodon/blob/main/test/fresh.tgz)
+- [mastodon csv2json row file](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-162733800.json)
+- [mastodon csv2json gnuplot data file](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-162733800.gp)
+- [mastodon peakers only file]((https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1757201231-anderson1.json)
+- [mastodon database dump of population table](https://github.com/guycole/mellow-mastodon/blob/main/test/peakers-2025-09-06.txt)
 
 ## History
 Mastodon replaces the obsolete [Mellow Elephant](https://github.com/guycole/mellow-elephant)
