@@ -25,6 +25,7 @@ Samples of mastodon files
 - [rtl_power CSV file (full)](https://github.com/guycole/mellow-mastodon/blob/main/test/fresh.tgz)
 - [mastodon csv2json row file](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-162733800.json)
 - [mastodon csv2json gnuplot data file](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-162733800.gp)
+- [mastodon csv2json gnuplot png file](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-162733800.png)
 - [mastodon peakers only file](https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1757201231-anderson1.json)
 - [mastodon database dump of population table](https://github.com/guycole/mellow-mastodon/blob/main/test/peakers-2025-09-06.txt)
 
