@@ -2,5 +2,5 @@
 */6 * * * * /home/gsc/Documents/github/mellow-mastodon/bin/big-search01.sh > /dev/null 2>&1
 13 * * * * /home/gsc/Documents/github/mellow-mastodon/bin/csv2json.sh > /dev/null 2>&1
 23 23 * * * /home/gsc/Documents/github/mellow-mastodon/bin/archiver.sh big-search01-vallejo01 > /dev/null 2>&1
-27 3,9.15,21 * * * /home/gsc/Documents/github/mellow-mastodon/bin/wombat04-to-s3.sh > /dev/null 2>&1
+27 3,9,15,21 * * * /home/gsc/Documents/github/mellow-mastodon/bin/wombat04-to-s3.sh > /dev/null 2>&1
 #
