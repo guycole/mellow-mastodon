@@ -53,8 +53,9 @@ class LoadLog(Base):
     id = Column(Integer, primary_key=True)
     file_name = Column(String)
     file_type = Column(String)
-    time_stamp_epoch = Column(BigInteger)
+    population = Column(Integer)
     project = Column(String)
+    time_stamp_epoch = Column(BigInteger)
     equipment_id = Column(BigInteger)
     site_id = Column(BigInteger)
 
@@ -62,6 +63,7 @@ class LoadLog(Base):
         self.file_name = args["file_name"]
         self.file_type = args["file_type"]
         self.time_stamp_epoch = args["time_stamp_epoch"]
+        self.population = args["population"]
         self.project = args["project"]
         self.equipment_id = args["equipment_id"]
         self.site_id = args["site_id"]
