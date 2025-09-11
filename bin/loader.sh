@@ -14,7 +14,7 @@ WORK_DIR="/var/mellow/mastodon"
 #
 cd $WORK_DIR
 #
-if [[ -d "$fresh_dir" ]]; then
+if [[ -d "$FRESH_DIR" ]]; then
   rmdir fresh
 fi
 #

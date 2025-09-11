@@ -50,7 +50,9 @@ class MastodonFile:
             )
             if len(pop) < 1:
                 pop_args = {
+                    "case_uuid": "10514480-5caf-4a41-98f2-a57eb24c2f9b",
                     "freq_hz": element[0],
+                    "note": "noNote",
                     "obs_first": dt,
                     "obs_last": dt,
                     "population": 1,
