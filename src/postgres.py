@@ -107,15 +107,6 @@ class PostGres:
         with self.Session() as session:
             return session.scalars(select(Site).filter_by(name=name)).first()
 
-    #    def load_log_select_all(self) -> list[LoadLog]:
-    #        with self.Session() as session:
-    #            return session.scalars(select(LoadLog)).all()
-
-    #    def load_log_select_by_file_date(self, target: datetime) -> list[LoadLog]:
-    #        with self.Session() as session:
-    #            return session.scalars(select(LoadLog).filter_by(file_date=target)).all()
-
-
 # ;;; Local Variables: ***
 # ;;; mode:python ***
 # ;;; End: ***
