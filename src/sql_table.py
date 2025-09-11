@@ -97,14 +97,18 @@ class Population(Base):
     __tablename__ = "population"
 
     id = Column(Integer, primary_key=True)
+    case_uuid = Column(String)
     freq_hz = Column(Integer)
     obs_first = Column(DateTime)
     obs_last = Column(DateTime)
     population = Column(BigInteger)
     site_id = Column(BigInteger)
+    note = Column(String)
 
     def __init__(self, args: dict[str, any]):
         self.freq_hz = args["freq_hz"]
+        self.case_uuid = args["case_uuid"]
+        self.note = args["note"]
         self.obs_first = args["obs_first"]
         self.obs_last = args["obs_last"]
         self.population = args["population"]
