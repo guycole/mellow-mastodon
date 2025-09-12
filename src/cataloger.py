@@ -68,10 +68,10 @@ class Loader:
         except Exception as error:
             print(error)
         
-    def catalog_entry(self, case_uuid: str, bin: Population, site_name: str) -> dict[str, any]:
+    def catalog_entry(self, bin: Population, site_name: str) -> dict[str, any]:
         result = {
             "project": "big-search01",
-            "case_id": case_uuid,
+            "case_id": bin.case_uuid,
             "freq_bins": [bin.freq_hz],
             "freq_hz": bin.freq_hz,
             "modulation": "unknown",
@@ -86,8 +86,10 @@ class Loader:
         return result
         
     def create_fresh_case(self, bin: Population, site: Site) -> None:
-        case_uuid = str(uuid.uuid4())
-        payload = self.catalog_entry(case_uuid, bin, site.name)
+        bin.case_uuid = str(uuid.uuid4())
+        self.postgres.population_update(bin)
+
+        payload = self.catalog_entry(bin, site.name)
         self.json_writer(payload)
 
     def update_existing_case(self, bin: Population) -> None:
