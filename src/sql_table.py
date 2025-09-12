@@ -94,7 +94,7 @@ class Observation(Base):
 
 
 class Population(Base):
-    """peaker table definition"""
+    """population table definition"""
 
     __tablename__ = "population"
 
@@ -117,7 +117,7 @@ class Population(Base):
         self.site_id = args["site_id"]
 
     def __repr__(self):
-        return f"peaker({self.site_id} {self.freq_hz} {self.population})"
+        return f"population({self.site_id} {self.freq_hz} {self.population})"
 
 
 class Site(Base):
