@@ -1,0 +1,15 @@
+{
+    "project": "big-search01",
+    "case_id": "926f06c0-00b7-4351-9e25-53547019e625",
+    "freq_bins": [
+        600006295
+    ],
+    "freq_hz": 600006295,
+    "modulation": "unknown",
+    "name": "unknown",
+    "note": "noNote",
+    "obsFirstEpochTime": 1756836072,
+    "obsLastEpochTime": 1757632263,
+    "obsSite": "vallejo1",
+    "samples": []
+}
