@@ -4,12 +4,7 @@
 # Development Environment: Ubuntu 22.04.5 LTS/python 3.10.12
 # Author: G.S. Cole (guycole at gmail dot com)
 #
-import datetime
-import json
-import os
-import shutil
 import sys
-import uuid
 
 import yaml
 from yaml.loader import SafeLoader
@@ -17,19 +12,18 @@ from yaml.loader import SafeLoader
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+import json_helper
 import postgres
-
-from mastodon_file import MastodonFile
 
 from sql_table import Equipment, LoadLog, Observation, Population, Site
 
-class Loader:
+class CaseDumper:
     default_case_uuid = '10514480-5caf-4a41-98f2-a57eb24c2f9b'
     
     def __init__(self, configuration: dict[str, str]):
         self.db_conn = configuration["dbConn"]
         self.archive_dir = configuration["archiveDir"]
-        self.catalog_dir = configuration["catalogDir"]
+        self.case_dir = configuration["caseDir"]
         self.failure_dir = configuration["failureDir"]
         self.fresh_dir = configuration["freshDir"]
         self.sql_echo = configuration["sqlEchoEnable"]
@@ -45,55 +39,26 @@ class Loader:
             sessionmaker(bind=db_engine, expire_on_commit=False)
         )
 
-    def full_file_name(self, file_name: str) -> str:
-        return f"{self.catalog_dir}/{file_name}.json"
-
-    def json_reader(self, file_name: str) -> dict[str, any]:
-        results = {}
-
-        try:
-            with open(file_name, "r") as in_file:
-                results = json.load(in_file)
-        except Exception as error:
-            print(error)
-
-        return results
-
-    def json_writer(self, payload: dict[str, any]) -> None:
-        file_name = self.full_file_name(payload['case_id'])
-
-        try:
-            with open(file_name, "w") as out_file:
-                json.dump(payload, out_file, indent=4)
-        except Exception as error:
-            print(error)
-        
-    def catalog_entry(self, bin: Population, site_name: str) -> dict[str, any]:
-        result = {
-            "project": "big-search01",
-            "case_id": bin.case_uuid,
-            "freq_bins": [bin.freq_hz],
-            "freq_hz": bin.freq_hz,
-            "modulation": "unknown",
-            "name": "unknown",
-            "note": bin.note,
-            "obsFirstEpochTime": int(bin.obs_first.timestamp()),
-            "obsLastEpochTime": int(bin.obs_last.timestamp()),
-            "obsSite": site_name,
-            "samples": []
-        }
-
-        return result
-        
     def create_fresh_case(self, bin: Population, site: Site) -> None:
         bin.case_uuid = str(uuid.uuid4())
         self.postgres.population_update(bin)
 
-        payload = self.catalog_entry(bin, site.name)
-        self.json_writer(payload)
+        helper = json_helper.JsonHelper(self.case_dir)
+        payload = helper.fresh_population_to_json(bin, "big-search01")
+        helper.json_writer(payload)
 
     def update_existing_case(self, bin: Population) -> None:
-        pass
+        helper = json_helper.JsonHelper(self.case_dir)
+
+        payload = helper.json_reader(bin.case_uuid)
+        if len(payload) < 1:
+            print(f"case {bin.case_uuid} read error")
+            return
+        
+        payload['obsFirstEpochTime'] = bin.obs_first.timestamp()
+        payload['obsLastEpochTime'] = bin.obs_last.timestamp()
+
+        helper.json_writer(payload)
 
     def process_site_population(self, site: Site) -> None:
         print(f"process {site}")
@@ -113,7 +78,7 @@ class Loader:
                 self.create_fresh_case(bin, site)
             else:
                 existing_case = existing_case + 1
-                # self.update_existing_case(bin)
+                self.update_existing_case(bin)
 
         print(f"site {site.name} below {below_threshold} existing {existing_case} fresh {fresh_case}")
 
@@ -123,7 +88,7 @@ class Loader:
         for site in site_list:
             self.process_site_population(site)
             
-print("start loader")
+print("start case_dumper")
 
 #
 # argv[1] = configuration filename
@@ -140,10 +105,10 @@ if __name__ == "__main__":
         except yaml.YAMLError as error:
             print(error)
 
-    loader = Loader(configuration)
-    loader.execute()
+    dumper = CaseDumper(configuration)
+    dumper.execute()
 
-print("stop loader")
+print("stop case_dumper")
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***
