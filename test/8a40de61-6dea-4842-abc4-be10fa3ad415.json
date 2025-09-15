@@ -1,0 +1,14 @@
+{
+    "project": "big-search01",
+    "schemaVersion": 1,
+    "caseId": "8a40de61-6dea-4842-abc4-be10fa3ad415",
+    "freqBins": [124990417, 124995880, 125001344, 125006808],
+    "freqHz": 125000000,
+    "modulation": "unknown",
+    "name": "interference",
+    "note": "ethernet interference",
+    "obsFirstEpochTime": 1756836072,
+    "obsLastEpochTime": 1757632263,
+    "obsSite": "vallejo1",
+    "samples": []
+}

@@ -2,6 +2,9 @@
 # repository of processed observations
 archiveDir: /var/mellow/mastodon/archive
 #
+# catalog 
+catalogDir: /var/mellow/mastodon/catalog
+#
 # repository of converted observations
 cookedDir: /var/mellow/mastodon/cooked
 #
@@ -23,6 +26,9 @@ dbConn: "postgresql+psycopg2://mastodon_py:bogus@localhost:5432/mastodon_v1"
 #
 # true, echo SQL statements
 sqlEchoEnable: true
+#
+# threshold to trigger case notation logic
+populationThreshold: 1000
 #
 # collection antenna
 #antenna: discone1
