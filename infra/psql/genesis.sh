@@ -16,6 +16,7 @@ batabat
 # as pg superuser
 # create tablespace mastodon location '/mnt/pg_tablespace/mastodon';
 # create tablespace mastodon location '/mnt/pp1/postgres/mastodon';
+# create tablespace mastodon location '/Library/PostgreSQL/pg_tablespace/mastodon';
 
 createdb mastodon -O mastodon_admin -D mastodon -E UTF8 -T template0 -l C
 
