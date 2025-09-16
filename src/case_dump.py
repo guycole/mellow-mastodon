@@ -1,10 +1,11 @@
 #
-# Title: cataloger.py
+# Title: case_dump.py
 # Description: update catalog files
 # Development Environment: Ubuntu 22.04.5 LTS/python 3.10.12
 # Author: G.S. Cole (guycole at gmail dot com)
 #
 import sys
+import uuid
 
 import yaml
 from yaml.loader import SafeLoader
@@ -17,7 +18,7 @@ import postgres
 
 from sql_table import Equipment, LoadLog, Observation, Population, Site
 
-class CaseDumper:
+class CaseDump:
     default_case_uuid = '10514480-5caf-4a41-98f2-a57eb24c2f9b'
     
     def __init__(self, configuration: dict[str, str]):
@@ -44,7 +45,7 @@ class CaseDumper:
         self.postgres.population_update(bin)
 
         helper = json_helper.JsonHelper(self.case_dir)
-        payload = helper.fresh_population_to_json(bin, "big-search01")
+        payload = helper.fresh_population_to_json(bin, "big-search01", site)
         helper.json_writer(payload)
 
     def update_existing_case(self, bin: Population) -> None:
@@ -88,7 +89,7 @@ class CaseDumper:
         for site in site_list:
             self.process_site_population(site)
             
-print("start case_dumper")
+print("start case_dump")
 
 #
 # argv[1] = configuration filename
@@ -105,10 +106,10 @@ if __name__ == "__main__":
         except yaml.YAMLError as error:
             print(error)
 
-    dumper = CaseDumper(configuration)
+    dumper = CaseDump(configuration)
     dumper.execute()
 
-print("stop case_dumper")
+print("stop case_dump")
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***

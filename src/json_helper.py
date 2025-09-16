@@ -52,7 +52,7 @@ class JsonHelper:
     def full_file_name(self, case_uuid: str) -> str:
         return f"{self.case_dir}/{case_uuid}.json"
     
-    def fresh_population_to_json(self, pop: Population, project: str) -> dict[str, any]:
+    def fresh_population_to_json(self, pop: Population, project: str, site: Site) -> dict[str, any]:
         """ convert a fresh case file"""
 
         return{
@@ -66,7 +66,7 @@ class JsonHelper:
             "note": pop.note,
             "obsFirstEpochTime": pop.obs_first.timestamp(),
             "obsLastEpochTime": pop.obs_last.timestamp(),
-            "obsSite": "site.name",
+            "obsSite": site.name,
             "samples": []
         }
     

@@ -1,6 +1,6 @@
 #
-# Title: casefix.py
-# Description: read a case from the catalog and update the database
+# Title: case_fix.py
+# Description: read a case and update the database
 # Development Environment: Ubuntu 22.04.5 LTS/python 3.10.12
 # Author: G.S. Cole (guycole at gmail dot com)
 #
@@ -40,7 +40,7 @@ class CaseFix:
         )
 
     def execute(self, case_uuid: str) -> None:
-        print(f"casefix {case_uuid}")
+        print(f"case_fix {case_uuid}")
 
         # read case card
         helper = json_helper.JsonHelper(self.case_dir)
