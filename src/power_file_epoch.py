@@ -6,6 +6,7 @@
 #
 import csv
 import datetime
+import json
 import os
 import sys
 
@@ -15,6 +16,7 @@ class PowerFileEpoch:
     def __init__(self, epoch_time: int, meta_map: dict[str, any]):
         self.epoch_time = epoch_time
         self.meta_map = meta_map
+        self.meta_map["epoch_time"] = epoch_time
 
         self.pfr_map = {}
 
@@ -37,6 +39,9 @@ class PowerFileEpoch:
             self.pfr_map[key].gnuplot_writer(cooked_dir)
 
     def write_peakers(self, peaker_dir: str) -> None:
+        file_name = f"{peaker_dir}/{self.meta_map['project']}-{self.meta_map['epoch_time']}-{self.meta_map['site']}.json"
+        print(file_name)
+
         self.json_meta_map = {
             "antenna": self.meta_map["antenna"],
             "peakerAlgorithm": self.meta_map["peaker_algorithm"],
@@ -45,13 +50,19 @@ class PowerFileEpoch:
             "receiver": self.meta_map["receiver"],
             "site": self.meta_map["site"],
             "schemaVersion": 1,
-            "timeStampEpoch": self.meta_map["time_stamp_epoch"],
-            "timeStampIso8601": self.meta_map["time_stamp_iso8601"],
+            "timeStampEpoch": self.meta_map["epoch_time"],
         }
 
-        print("fixme writer")
-        print(self.peaker_list)
-        # write meta and peakers
+        payload = {
+            "meta": self.json_meta_map,
+            "peakers": self.peaker_list,
+        }
+
+        try:
+            with open(file_name, "w") as out_file:
+                json.dump(payload, out_file, indent=4)
+        except Exception as error:
+            print(error)
 
     def peakers_1(self) -> None:
         self.peaker_list = []
