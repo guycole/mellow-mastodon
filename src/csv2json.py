@@ -23,20 +23,25 @@ from power_file_row import PowerFileRow
 
 from power_file import PowerFile
 
-
 class CsvJson:
     half_window_size = 33
 
     def __init__(self, configuration: dict[str, str]):
-        self.archive_dir = configuration["archiveDir"]
         self.cooked_dir = configuration["cookedDir"]
         self.fresh_dir = configuration["freshDir"]
+        self.peaker_dir = configuration["peakerDir"]
         self.processed_dir = configuration["processedDir"]
+
+       
+       
 
         self.antenna = configuration["antenna"]
         self.project = configuration["project"]
         self.receiver = configuration["receiver"]
         self.site = configuration["site"]
+
+        self.peaker_algorithm = configuration["peakerAlgorithm"]
+        self.peaker_threshold = configuration["peakerThreshold"]
 
     def execute(self) -> None:
         print(f"fresh dir:{self.fresh_dir}")
@@ -44,6 +49,15 @@ class CsvJson:
 
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")
+
+        pf_args = {
+            "antenna": self.antenna,
+            "peaker_algorithm": self.peaker_algorithm,
+            "peaker_threshold": self.peaker_threshold,
+            "project": self.project,
+            "receiver": self.receiver,
+            "site": self.site,
+        }
 
         for target in targets:
             print(f"processing {target}")
@@ -56,17 +70,21 @@ class CsvJson:
                 print(f"skipping {target}")
                 continue
 
-            power_file = PowerFile(self.antenna, self.project, self.receiver, self.site)
-            power_epoch_map = power_file.parser(target)
+            if target == "8e778934-5283-4d3e-9641-ccd8b33893c1.csv":
+                print("skipping test file")
+                continue
+
+            power_file = PowerFile(pf_args)
+            power_epoch_map = power_file.parser(target, self.half_window_size)
             for key in power_epoch_map.keys():
-                # peakers by epoch time sorted by frequency
-                peaker_list = power_epoch_map[key].peakers(
-                    self.half_window_size, self.cooked_dir
-                )
-                power_file.json_writer(key, self.archive_dir, peaker_list)
+                power_epoch_map[key].write_gnuplot_and_json(self.cooked_dir)
 
-            os.rename(target, self.processed_dir + "/" + target)
+                if self.peaker_algorithm == 1:
+                    power_epoch_map[key].peakers_1()
+                else:
+                    print(f"unknown peaker algorithm {self.peaker_algorithm}")
 
+#            os.rename(target, self.processed_dir + "/" + target)
 
 print("start csv2json")
 

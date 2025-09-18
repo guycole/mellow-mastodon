@@ -11,7 +11,6 @@ import sys
 
 from power_file_row import PowerFileRow
 
-
 class PowerFileEpoch:
     def __init__(self, epoch_time: int):
         self.time_stamp_epoch = epoch_time
@@ -23,35 +22,32 @@ class PowerFileEpoch:
     def add_sample(self, pfr: PowerFileRow) -> None:
         """add a sample for this epoch time"""
 
-        if (
-            self.time_stamp_epoch != pfr.meta_map["time_stamp_epoch"]
-        ):  # all samples share same epoch time
-            raise Exception(
-                f"epoch time mismatch {self.time_stamp_epoch} {pfr.meta_map['time_stamp_epoch']}"
-            )
+        if (self.time_stamp_epoch != pfr.meta_map["time_stamp_epoch"]):  
+            # all samples share same epoch time
+            raise Exception(f"epoch time mismatch {self.time_stamp_epoch} {pfr.meta_map['time_stamp_epoch']}")
 
         self.pfr_map[pfr.meta_map["freq_low_hz"]] = pfr
 
-    def peakers(
-        self, half_window_size: int, cooked_dir: str
-    ) -> list[tuple[int, float, float]]:
-        """return list of all rows this epoch"""
+    def write_gnuplot_and_json(self, cooked_dir:str) -> None:
+        for key in self.pfr_map.keys():
+            #print(f"  key {key} {self.pfr_map[key]}")
+            self.pfr_map[key].json_writer(cooked_dir)
+            self.pfr_map[key].gnuplot_writer(cooked_dir)
 
+    def json_writer(self, peaker_list: list[tuple[int, float]] ) -> None:
+        print("fixme writer")
+        # write meta and peakers
+
+    def peakers_1(self) -> None:
         peaker_list = []
 
         # collect all peakers into single list sorted by frequency
         sorted_keys = sorted(self.pfr_map.keys())
         for key in sorted_keys:
-            # print(f"  key {key} {self.pfr_map[key]}")
-            self.pfr_map[key].moving_window(half_window_size)  # compute moving window
-            self.pfr_map[key].json_writer(cooked_dir)  # write all values for row
-            self.pfr_map[key].gnuplot_writer(cooked_dir)
+            print(f"  key {key} {self.pfr_map[key]}")
+            peaker_list.extend(self.pfr_map[key].peakers_1())
 
-            peaker_list.extend(self.pfr_map[key].peakers())  # collect all peakers
-            # print(f" peakers {len(peaker_list)}")
-
-        return peaker_list
-
+        self.json_writer(peaker_list)
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***

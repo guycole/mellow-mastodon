@@ -1,0 +1,5 @@
+raw csv to /tmp then fresh
+csv2json reads from fresh, copies csv to processed
+  writes gnuplot, json to cooked
+  writes peakers to peakers
+  
