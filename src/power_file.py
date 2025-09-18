@@ -74,7 +74,7 @@ class PowerFile:
 
             epoch_key = pfr.meta_map["time_stamp_epoch"]
             if epoch_key not in power_epoch_map:
-                power_epoch_map[epoch_key] = PowerFileEpoch(epoch_key)
+                power_epoch_map[epoch_key] = PowerFileEpoch(epoch_key, self.meta_map)
 
             power_epoch_map[epoch_key].add_sample(pfr)
 

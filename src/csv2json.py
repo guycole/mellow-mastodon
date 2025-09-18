@@ -32,9 +32,6 @@ class CsvJson:
         self.peaker_dir = configuration["peakerDir"]
         self.processed_dir = configuration["processedDir"]
 
-       
-       
-
         self.antenna = configuration["antenna"]
         self.project = configuration["project"]
         self.receiver = configuration["receiver"]
@@ -81,6 +78,7 @@ class CsvJson:
 
                 if self.peaker_algorithm == 1:
                     power_epoch_map[key].peakers_1()
+                    power_epoch_map[key].write_peakers(self.peaker_dir)
                 else:
                     print(f"unknown peaker algorithm {self.peaker_algorithm}")
 
