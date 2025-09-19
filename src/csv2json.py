@@ -51,7 +51,6 @@ class CsvJson:
             "half_window_size": 33,
             "peaker_algorithm": self.peaker_algorithm,
             "peaker_dir": self.peaker_dir,
-            "peaker_threshold": self.peaker_threshold,
             "project": self.project,
             "receiver": self.receiver,
             "site": self.site,
