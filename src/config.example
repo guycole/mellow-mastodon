@@ -19,7 +19,7 @@ freshDir: /var/mellow/mastodon/fresh
 processedDir: /var/mellow/mastodon/processed
 #
 # peaker files
-peakersDir: /var/mellow/mastodon/peakers
+peakerDir: /var/mellow/mastodon/peaker
 #
 # row artifacts
 rowDir: /var/mellow/mastodon/row

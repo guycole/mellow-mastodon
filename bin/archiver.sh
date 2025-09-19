@@ -15,19 +15,19 @@ fi
 TODAY=$(date '+%Y-%m-%d')
 FILE_NAME="$1-${TODAY}.tgz"
 #
-ARCHIVE_DIR="archive"
 EXPORT_DIR="export"
+PEAKER_DIR="peaker"
 WORK_DIR="/var/mellow/mastodon"
 #
 echo "start archive for $FILE_NAME"
 #
 cd ${WORK_DIR}
-tar -cvzf ${FILE_NAME} ${ARCHIVE_DIR}
+tar -cvzf ${FILE_NAME} ${PEAKER_DIR}
 mv ${FILE_NAME} ${EXPORT_DIR}
 #
 echo "cleanup"
-rm -rf ${ARCHIVE_DIR}
-mkdir ${ARCHIVE_DIR}
+rm -rf ${PEAKER_DIR}
+mkdir ${PEAKER_DIR}
 #
 echo "end archive"
 #

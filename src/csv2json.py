@@ -86,7 +86,7 @@ class CsvJson:
                 else:
                     print(f"unknown peaker algorithm {self.peaker_algorithm}")
 
-#            os.rename(target, self.processed_dir + "/" + target)
+            os.rename(target, self.processed_dir + "/" + target)
 
 print("start csv2json")
 
