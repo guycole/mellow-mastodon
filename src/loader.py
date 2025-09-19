@@ -25,7 +25,7 @@ class Loader:
         self.db_conn = configuration["dbConn"]
         self.archive_dir = configuration["archiveDir"]
         self.failure_dir = configuration["failureDir"]
-        self.fresh_dir = configuration["freshDir"]
+        self.peaker_dir = configuration["peakerDir"]
         self.sql_echo = configuration["sqlEchoEnable"]
 
         connect_dict = {"options": "-csearch_path={}".format("mastodon_v1")}
@@ -60,8 +60,8 @@ class Loader:
     def execute(self) -> None:
         mastodon_file = MastodonFile(self.postgres)
 
-        print(f"fresh dir:{self.fresh_dir}")
-        os.chdir(self.fresh_dir)
+        print(f"peaker dir:{self.peaker_dir}")
+        os.chdir(self.peaker_dir)
 
         targets = os.listdir(".")
         print(f"{len(targets)} files noted")

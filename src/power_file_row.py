@@ -166,8 +166,8 @@ class PowerFileRow:
 
         for current in self.spectrum_list:
             if current[1] > 0.0:
-                # append frequency, dbm
-                result.append((current[0], current[1]))
+                # append frequency, dbm, average
+                result.append((current[0], current[1], current[2]))
 
         return result
 

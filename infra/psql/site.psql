@@ -19,3 +19,6 @@ insert into mastodon_v1.site(altitude, latitude, longitude, name) values(12.3, 4
 
 -- vallejo1
 insert into mastodon_v1.site(altitude, latitude, longitude, name) values(12.3, 38.10812, -122.26794, 'vallejo1');
+
+-- development1
+insert into mastodon_v1.site(altitude, latitude, longitude, name) values(12.3, 38.10812, -122.26794, 'development1');

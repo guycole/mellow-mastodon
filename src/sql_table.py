@@ -11,7 +11,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column
-from sqlalchemy import BigInteger, Boolean, Date, DateTime, Float, Integer, String
+from sqlalchemy import BigInteger, Boolean, Date, DateTime, Float, Integer, SmallInteger, String
 
 from sqlalchemy.orm import registry
 from sqlalchemy.orm import DeclarativeBase
@@ -52,20 +52,20 @@ class LoadLog(Base):
 
     id = Column(Integer, primary_key=True)
     file_name = Column(String)
-    file_type = Column(String)
     population = Column(Integer)
     project = Column(String)
     time_stamp_epoch = Column(BigInteger)
     equipment_id = Column(BigInteger)
+    schema_version = Column(SmallInteger)
     site_id = Column(BigInteger)
 
     def __init__(self, args: dict[str, any]):
         self.file_name = args["file_name"]
-        self.file_type = args["file_type"]
         self.time_stamp_epoch = args["time_stamp_epoch"]
         self.population = args["population"]
         self.project = args["project"]
         self.equipment_id = args["equipment_id"]
+        self.schema_version = args["schema_version"]
         self.site_id = args["site_id"]
 
     def __repr__(self):
