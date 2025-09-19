@@ -5,12 +5,12 @@
 create table mastodon_v1.load_log (
   id                bigserial    primary key,
   file_name         varchar(64)  unique not null,
-  file_type         varchar(16)  not null,
   time_stamp_epoch  bigint       not null,
   population        int          not null,
   project           varchar(16)  not null,
   equipment_id      bigint       not null,
   constraint equipment_id foreign key(equipment_id) references mastodon_v1.equipment(id),
+  schema_version    smallint     not null,
   site_id           bigint       not null,
   constraint site_id foreign key(site_id) references mastodon_v1.site(id)
 ) tablespace mastodon;

@@ -36,7 +36,6 @@ class CsvJson:
         self.site = configuration["site"]
 
         self.peaker_algorithm = configuration["peakerAlgorithm"]
-        self.peaker_threshold = configuration["peakerThreshold"]
 
     def execute(self) -> None:
         print(f"fresh dir:{self.fresh_dir}")

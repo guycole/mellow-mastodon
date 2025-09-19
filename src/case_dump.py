@@ -70,6 +70,7 @@ class CaseDump:
 
         population_list = self.postgres.population_select_all_by_site(site.id)
         for bin in population_list:
+            print(f"bin population: {bin.population}, threshold: {self.population_threshold}")
             if bin.population < self.population_threshold:
                 below_threshold = below_threshold + 1
                 continue

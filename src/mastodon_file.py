@@ -103,10 +103,10 @@ class MastodonFile:
         return {
             "equipment_id": equipment_id,
             "file_name": file_name,
-            "file_type": raw_json["file_type"],
             "project": raw_json["project"],
+            "schema_version": raw_json["schemaVersion"],
             "site_id": site.id,
-            "time_stamp_epoch": raw_json["time_stamp_epoch"],
+            "time_stamp_epoch": raw_json["timeStampEpoch"],
         }
 
     def peakers(self, raw_json: dict[str, any]) -> list[tuple]:

@@ -18,3 +18,6 @@ insert into mastodon_v1.equipment(antenna, project, receiver) values('discone1',
 
 -- vallejo1
 insert into mastodon_v1.equipment(antenna, project, receiver) values('discone2', 'big-search01', 'rtl-sdr-5');
+
+-- development1
+insert into mastodon_v1.equipment(antenna, project, receiver) values('whip', 'big-search01', 'rtl-sdr-5');

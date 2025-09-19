@@ -3,7 +3,7 @@
 archiveDir: /var/mellow/mastodon/archive
 #
 # catalog 
-catalogDir: /var/mellow/mastodon/catalog
+caseDir: /var/mellow/mastodon/case
 #
 # repository of converted observations
 cookedDir: /var/mellow/mastodon/cooked
