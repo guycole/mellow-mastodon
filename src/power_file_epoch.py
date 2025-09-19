@@ -44,7 +44,6 @@ class PowerFileEpoch:
             "antenna": pf_args["antenna"],
             "application": pf_args["application"],
             "peakerAlgorithm": pf_args['peaker_algorithm'],
-            "peakerThreshold": pf_args['peaker_threshold'],
             "project": pf_args["project"],
             "receiver": pf_args["receiver"],
             "site": pf_args["site"],
