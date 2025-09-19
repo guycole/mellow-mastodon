@@ -24,8 +24,6 @@ from power_file_row import PowerFileRow
 from power_file import PowerFile
 
 class CsvJson:
-    half_window_size = 33
-
     def __init__(self, configuration: dict[str, str]):
         self.cooked_dir = configuration["cookedDir"]
         self.fresh_dir = configuration["freshDir"]
@@ -49,11 +47,16 @@ class CsvJson:
 
         pf_args = {
             "antenna": self.antenna,
+            "application": sys.argv[0],
+            "cooked_dir": self.cooked_dir,
+            "half_window_size": 33,
             "peaker_algorithm": self.peaker_algorithm,
+            "peaker_dir": self.peaker_dir,
             "peaker_threshold": self.peaker_threshold,
             "project": self.project,
             "receiver": self.receiver,
             "site": self.site,
+            "source_file": "fixme",
         }
 
         for target in targets:
@@ -71,14 +74,15 @@ class CsvJson:
                 print("skipping test file")
                 continue
 
+            pf_args['source_file'] = target
             power_file = PowerFile(pf_args)
-            power_epoch_map = power_file.parser(target, self.half_window_size)
+            power_epoch_map = power_file.parser()
             for key in power_epoch_map.keys():
-                power_epoch_map[key].write_gnuplot_and_json(self.cooked_dir)
+                power_epoch_map[key].write_gnuplot_and_json(pf_args)
 
                 if self.peaker_algorithm == 1:
                     power_epoch_map[key].peakers_1()
-                    power_epoch_map[key].write_peakers(self.peaker_dir)
+                    power_epoch_map[key].write_peakers(pf_args)
                 else:
                     print(f"unknown peaker algorithm {self.peaker_algorithm}")
 
