@@ -30,7 +30,6 @@ class PowerFile:
         self.json_meta_map = {
             "antenna": self.meta_map["antenna"],
             "peakerAlgorithm": self.meta_map["peaker_algorithm"],
-            "peakerThreshold": self.meta_map["peaker_threshold"],
             "project": self.meta_map["project"],
             "receiver": self.meta_map["receiver"],
             "site": self.meta_map["site"],
