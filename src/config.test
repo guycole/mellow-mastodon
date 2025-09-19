@@ -47,3 +47,6 @@ project: big-search01
 receiver: rtl-sdr-5
 #receiver: rtl-sdr-14
 #
+peakerAlgorithm: 1
+peakerThreshold: 1000
+#

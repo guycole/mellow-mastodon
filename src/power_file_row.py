@@ -7,8 +7,8 @@
 import datetime
 import json
 
-
 class PowerFileRow:
+
     def __init__(self, raw_row: list[str]):
         # ['2025-05-16', ' 04:16:20', ' 966482608', ' 969275710', ' 2727.64']
         # "\tdate, time, Hz low, Hz high, Hz step, samples, dbm, dbm, ...
@@ -18,6 +18,7 @@ class PowerFileRow:
 
         self.raw_row = raw_row
         self.samples_list = []
+        self.spectrum_list = []
         self.statistics_map = {}
 
         row_date = raw_row[0].split("-")
@@ -32,8 +33,7 @@ class PowerFileRow:
 
         dt = datetime.datetime(yy, mm, dd, hour, minute, second)
 
-        self.meta_map = {
-            "file_type": "mastodon-v1",
+        self.pfr_meta_map = {
             "freq_low_hz": int(raw_row[2]),
             "freq_high_hz": int(raw_row[3]),
             "freq_step_hz": float(raw_row[4]),
@@ -44,7 +44,7 @@ class PowerFileRow:
         }
 
     def __str__(self):
-        return f"{self.meta_map['time_stamp_epoch']} {self.meta_map['freq_low_hz']} {self.meta_map['freq_high_hz']} {self.meta_map['freq_step_hz']}"
+        return f"{self.pfr_meta_map['time_stamp_epoch']} {self.pfr_meta_map['freq_low_hz']} {self.pfr_meta_map['freq_high_hz']} {self.pfr_meta_map['freq_step_hz']}"
 
     def convert_samples(self):
         # convert from string to float and discover basic row stats
@@ -56,8 +56,8 @@ class PowerFileRow:
         max_sample = -100
         total_samples = 0
 
-        current_frequency = self.meta_map["freq_low_hz"]
-        step_frequency = self.meta_map["freq_step_hz"]
+        current_frequency = self.pfr_meta_map["freq_low_hz"]
+        step_frequency = self.pfr_meta_map["freq_step_hz"]
 
         for ndx in range(6, len(self.raw_row)):  # start at 6 to skip row metadata
             current_value = float(self.raw_row[ndx])
@@ -82,44 +82,8 @@ class PowerFileRow:
             "min_sample": min_sample,
             "max_sample": max_sample,
         }
-
-    def file_name(self, row_dir: str) -> str:
-        return f"{row_dir}/{self.meta_map['time_stamp_epoch']}-{self.meta_map['freq_low_hz']}"
-
-    # plot for [col=2:3] '1756358045-154341525.gp' using 1:col
-    # plot for [col=2:3] '1756358045-157138950.gp' using 1:col
-    # plot for [col=2:3] '1756358045-159936375.gp' using 1:col
-    def gnuplot_writer(self, row_dir: str) -> None:
-        file_name = f"{self.file_name(row_dir)}.gp"
-
-        try:
-            with open(file_name, "w") as out_file:
-                for current in self.spectrum_list:
-                    out_file.write(f"{current[0]}\t{current[1]}\t{current[2]}\n")
-
-        except Exception as error:
-            print(error)
-
-    # timestamp-frequency.json i.e. 1756358045-159936375.json
-    def json_writer(self, row_dir: str) -> None:
-        file_name = f"{self.file_name(row_dir)}.json"
-
-        payload = {
-            "meta": self.meta_map,
-            "statistics": self.statistics_map,
-            "samples": self.spectrum_list,
-        }
-
-        # datetime is not json serializable
-        del payload["meta"]["time_stamp_dt"]
-
-        try:
-            with open(file_name, "w") as out_file:
-                json.dump(payload, out_file, indent=4)
-        except Exception as error:
-            print(error)
-
-    def moving_window(self, half_window_size: int) -> None:
+    
+    def moving_window(self, half_window_size: int) -> list[tuple[int, float, float]]:
         float_list = []  # convert sample tuples into list of floats
         for row in self.samples_list:
             float_list.append(row[1])  # sample[1] is dbm
@@ -135,27 +99,75 @@ class PowerFileRow:
             if right_ndx >= len(float_list):
                 right_ndx = len(float_list) - 1
 
-            local_maxima = max(float_list[left_ndx:right_ndx])
             local_mean = sum(float_list[left_ndx:right_ndx]) / (right_ndx - left_ndx)
 
-            peaker_flag = False
             sample_value = float_list[ndx]
 
-            if sample_value > 0.0:
-                peaker_flag = True
+            self.spectrum_list.append((self.samples_list[ndx][0], sample_value, local_mean))
 
-            self.spectrum_list.append(
-                (self.samples_list[ndx][0], sample_value, local_mean, peaker_flag)
-            )
 
-    def peakers(self) -> list[tuple[int, float]]:
+    def file_name(self, cooked_dir: str) -> str:
+        return f"{cooked_dir}/{self.pfr_meta_map['time_stamp_epoch']}-{self.pfr_meta_map['freq_low_hz']}"
+
+    # plot for [col=2:3] '1756358045-154341525.gp' using 1:col
+    # plot for [col=2:3] '1756358045-157138950.gp' using 1:col
+    # plot for [col=2:3] '1756358045-159936375.gp' using 1:col
+    def gnuplot_writer(self, cooked_dir: str) -> None:
+        file_name = f"{self.file_name(cooked_dir)}.gp"
+
+        try:
+            with open(file_name, "w") as out_file:
+                for current in self.spectrum_list:
+                    out_file.write(f"{current[0]}\t{current[1]}\t{current[2]}\n")
+        except Exception as error:
+            print(error)
+
+    # timestamp-frequency.json i.e. 1756358045-159936375.json
+    def json_writer(self, pf_args: dict[str, any]) -> None:
+        file_name = f"{self.file_name(pf_args['cooked_dir'])}.json"
+
+        self.json_meta_map = {
+            "antenna": pf_args["antenna"],
+            "application": pf_args["application"],
+            "freqHighHz": self.pfr_meta_map["freq_high_hz"],
+            "freqLowHz": self.pfr_meta_map["freq_low_hz"],
+            "freqStepHz": self.pfr_meta_map["freq_step_hz"],
+            "halfWindowSize": pf_args["half_window_size"],
+            "project": pf_args["project"],
+            "receiver": pf_args["receiver"],
+            "site": pf_args["site"],
+            "sourceFile": pf_args["source_file"],
+            "sampleQuantity": self.pfr_meta_map["sample_quantity"],
+            "schemaVersion": 1,
+            "timeStampEpoch": self.pfr_meta_map["time_stamp_epoch"],
+            "timeStampIso8601": self.pfr_meta_map["time_stamp_iso8601"],
+        }
+
+        self.json_statistics_map = {
+            "avgSample": self.statistics_map["avg_sample"],
+            "minSample": self.statistics_map["min_sample"],
+            "maxSample": self.statistics_map["max_sample"],
+        }
+
+        payload = {
+            "meta": self.json_meta_map,
+            "statistics": self.json_statistics_map,
+            "samples": self.spectrum_list,
+        }
+
+        try:
+            with open(file_name, "w") as out_file:
+                json.dump(payload, out_file, indent=4)
+        except Exception as error:
+            print(error)
+
+    def peakers_1(self) -> list[tuple[int, float]]:
         result = []
 
         for current in self.spectrum_list:
-            if current[3]:  # peaker flag
-                result.append(
-                    (current[0], current[1], current[2])
-                )  # (frequency, dbm, local_mean)
+            if current[1] > 0.0:
+                # append frequency, dbm
+                result.append((current[0], current[1]))
 
         return result
 
@@ -165,8 +177,8 @@ class PowerFileRow:
         actual_low = self.samples_list[0][0]
         actual_high = self.samples_list[-1][0]
 
-        predicted_low = self.meta_map["freq_low_hz"]
-        predicted_high = self.meta_map["freq_high_hz"]
+        predicted_low = self.pfr_meta_map["freq_low_hz"]
+        predicted_high = self.pfr_meta_map["freq_high_hz"]
 
         if actual_low != predicted_low or actual_high != predicted_high:
             print(f"actual low: {actual_low} predicted low: {predicted_low}")
@@ -175,7 +187,6 @@ class PowerFileRow:
         else:
             # print("passed")
             return True
-
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***
