@@ -179,3 +179,6 @@ src/config.yaml
 test/6bfb30ca-0276-4607-bcc4-5eec24880dce.csv
 test/9cb504d0-4a3b-4568-b6e9-83b58a260440.csv
 test/ac6379b2-caa4-4375-9802-f5b4d1828f81.csv
+
+.DS_Store
+
