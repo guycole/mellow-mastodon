@@ -60,6 +60,7 @@ class CaseFix:
                 print(f"population entry not found for {bin} {site}")
                 continue
 
+            # update case uuid within postgres for this bin
             candidates[0].case_uuid = case_uuid
             self.postgres.population_update(candidates[0])
 
