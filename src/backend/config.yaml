@@ -1,9 +1,11 @@
 #
 # case directory
-caseDir: /var/mellow/mastodon/case
+#caseDir: /var/mellow/mastodon/case
+caseDir: /home/gsc/Documents/github/mellow-mastodon/case
 #
 # repository of problem files
-failureDir: /var/mellow/mastodon/failure
+# failureDir: /var/mellow/mastodon/failure
+failureDir: /mnt/pp1/gsc/mellow/mastodon/failure
 #
 # peaker files
 peakerDir: /var/mellow/mastodon/peaker

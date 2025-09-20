@@ -99,6 +99,10 @@ class MastodonFile:
 
         site = self.postgres.site_select_by_name(raw_json["site"])
 
+        if "schemaVersion" not in raw_json:
+            raw_json["schemaVersion"] = 0
+            raw_json["timeStampEpoch"] = raw_json["time_stamp_epoch"]
+
         return {
             "equipment_id": equipment_id,
             "file_name": file_name,
@@ -112,7 +116,10 @@ class MastodonFile:
         results = []
 
         for element in raw_json:
-            results.append((element[0], element[1], element[2]))
+            if len(element) == 2:
+                results.append((element[0], element[1], 0)) # pad missing average
+            else:
+                results.append((element[0], element[1], element[2]))
 
         return results
 
