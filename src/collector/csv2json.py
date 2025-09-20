@@ -23,6 +23,7 @@ from power_file_row import PowerFileRow
 
 from power_file import PowerFile
 
+
 class CsvJson:
     def __init__(self, configuration: dict[str, str]):
         self.cooked_dir = configuration["cookedDir"]
@@ -72,7 +73,7 @@ class CsvJson:
                 print("skipping test file")
                 continue
 
-            pf_args['source_file'] = target
+            pf_args["source_file"] = target
             power_file = PowerFile(pf_args)
             power_epoch_map = power_file.parser()
             for key in power_epoch_map.keys():
@@ -85,6 +86,7 @@ class CsvJson:
                     print(f"unknown peaker algorithm {self.peaker_algorithm}")
 
             os.rename(target, self.processed_dir + "/" + target)
+
 
 print("start csv2json")
 

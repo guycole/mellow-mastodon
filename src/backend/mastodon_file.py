@@ -18,7 +18,6 @@ from sql_table import Equipment, Site
 
 
 class MastodonFile:
-
     def __init__(self, postgres: PostGres):
         self.postgres = postgres
 
@@ -27,7 +26,7 @@ class MastodonFile:
     ) -> bool:
         dt = datetime.datetime.fromtimestamp(meta_map["time_stamp_epoch"])
 
-        meta_map['population'] = len(peaker_list)
+        meta_map["population"] = len(peaker_list)
 
         load_log = self.postgres.load_log_insert(meta_map)
         if load_log is None:

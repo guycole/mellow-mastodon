@@ -22,10 +22,10 @@ from mastodon_file import MastodonFile
 
 class Loader:
     def __init__(self, configuration: dict[str, str]):
-        self.db_conn = configuration["dbConn"]
-        self.archive_dir = configuration["archiveDir"]
         self.failure_dir = configuration["failureDir"]
         self.peaker_dir = configuration["peakerDir"]
+
+        self.db_conn = configuration["dbConn"]
         self.sql_echo = configuration["sqlEchoEnable"]
 
         connect_dict = {"options": "-csearch_path={}".format("mastodon_v1")}
