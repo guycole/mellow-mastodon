@@ -17,5 +17,5 @@ dbConn: "postgresql+psycopg2://mastodon_client:batabat@localhost:5432/mastodon"
 sqlEchoEnable: false
 #
 # threshold to trigger case notation logic
-populationThreshold: 4
+populationThreshold: 3333
 #

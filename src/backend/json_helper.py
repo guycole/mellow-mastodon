@@ -71,8 +71,8 @@ class JsonHelper:
             "modulation": "unknown",
             "name": "unknown",
             "note": pop.note,
-            "obsFirstEpochTime": pop.obs_first.timestamp(),
-            "obsLastEpochTime": pop.obs_last.timestamp(),
+            "obsFirstEpochTime": int(pop.obs_first.timestamp()),
+            "obsLastEpochTime": int(pop.obs_last.timestamp()),
             "obsSite": site.name,
             "samples": [],
         }
