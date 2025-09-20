@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Title: loader.sh
-# Description: parse files from s3 and load into database
+# Title: case_dump.sh
+# Description: 
 # Development Environment: Ubuntu 22.04.05 LTS
 # Author: Guy Cole (guycole at gmail dot com)
 #
@@ -9,11 +9,11 @@ PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
 #
 HOME_DIR="/home/gsc/Documents/github"
 HOME_DIR="/Users/gsc/Documents/github"
-WORK_DIR="/var/mellow/mastodon"
 #
-echo "start load"
+echo "begin case_dump"
 cd $HOME_DIR/mellow-mastodon/src/backend
 source venv/bin/activate
-time python3 ./loader.py
-echo "end load"
+time python3 ./case_dump.py
+#
+echo "end case_dump"
 #

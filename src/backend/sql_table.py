@@ -11,7 +11,16 @@
 from datetime import datetime
 
 from sqlalchemy import Column
-from sqlalchemy import BigInteger, Boolean, Date, DateTime, Float, Integer, SmallInteger, String
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Date,
+    DateTime,
+    Float,
+    Integer,
+    SmallInteger,
+    String,
+)
 
 from sqlalchemy.orm import registry
 from sqlalchemy.orm import DeclarativeBase

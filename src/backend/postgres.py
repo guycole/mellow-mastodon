@@ -76,11 +76,13 @@ class PostGres:
         return candidate
 
     def population_select_all_by_site(self, site_id: int) -> list[Site]:
-        statement = select(Population).filter_by(site_id=site_id).order_by(Population.freq_hz)
+        statement = (
+            select(Population).filter_by(site_id=site_id).order_by(Population.freq_hz)
+        )
 
         with self.Session() as session:
             return session.scalars(statement).all()
-    
+
     def population_select_by_frequency(self, freq_hz: int) -> list[Population]:
         with self.Session() as session:
             return session.scalars(select(Population).filter_by(freq_hz=freq_hz)).all()
@@ -118,6 +120,7 @@ class PostGres:
     def site_select_by_name(self, name: str) -> Site:
         with self.Session() as session:
             return session.scalars(select(Site).filter_by(name=name)).first()
+
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***

@@ -16,20 +16,19 @@ from sqlalchemy.orm import sessionmaker
 import json_helper
 import postgres
 
-from sql_table import Equipment, LoadLog, Observation, Population, Site
+from sql_table import Population, Site
+
 
 class CaseDump:
-    default_case_uuid = '10514480-5caf-4a41-98f2-a57eb24c2f9b'
-    
+    default_case_uuid = "10514480-5caf-4a41-98f2-a57eb24c2f9b"
+
     def __init__(self, configuration: dict[str, str]):
-        self.db_conn = configuration["dbConn"]
-        self.archive_dir = configuration["archiveDir"]
         self.case_dir = configuration["caseDir"]
-        self.failure_dir = configuration["failureDir"]
-        self.fresh_dir = configuration["freshDir"]
+
+        self.db_conn = configuration["dbConn"]
         self.sql_echo = configuration["sqlEchoEnable"]
 
-        self.population_threshold = configuration['populationThreshold']
+        self.population_threshold = configuration["populationThreshold"]
 
         connect_dict = {"options": "-csearch_path={}".format("mastodon_v1")}
         db_engine = create_engine(
@@ -55,9 +54,9 @@ class CaseDump:
         if len(payload) < 1:
             print(f"case {bin.case_uuid} read error")
             return
-        
-        payload['obsFirstEpochTime'] = bin.obs_first.timestamp()
-        payload['obsLastEpochTime'] = bin.obs_last.timestamp()
+
+        payload["obsFirstEpochTime"] = bin.obs_first.timestamp()
+        payload["obsLastEpochTime"] = bin.obs_last.timestamp()
 
         helper.json_writer(payload)
 
@@ -70,7 +69,9 @@ class CaseDump:
 
         population_list = self.postgres.population_select_all_by_site(site.id)
         for bin in population_list:
-            print(f"bin population: {bin.population}, threshold: {self.population_threshold}")
+            print(
+                f"bin population: {bin.population}, threshold: {self.population_threshold}"
+            )
             if bin.population < self.population_threshold:
                 below_threshold = below_threshold + 1
                 continue
@@ -82,14 +83,17 @@ class CaseDump:
                 existing_case = existing_case + 1
                 self.update_existing_case(bin)
 
-        print(f"site {site.name} below {below_threshold} existing {existing_case} fresh {fresh_case}")
+        print(
+            f"site {site.name} below {below_threshold} existing {existing_case} fresh {fresh_case}"
+        )
 
     def execute(self) -> None:
         site_list = self.postgres.site_select_all()
 
         for site in site_list:
             self.process_site_population(site)
-            
+
+
 print("start case_dump")
 
 #

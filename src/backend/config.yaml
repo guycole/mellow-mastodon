@@ -1,0 +1,19 @@
+#
+# case directory
+caseDir: /var/mellow/mastodon/case
+#
+# repository of problem files
+failureDir: /var/mellow/mastodon/failure
+#
+# peaker files
+peakerDir: /var/mellow/mastodon/peaker
+#
+# database connection
+dbConn: "postgresql+psycopg2://mastodon_client:batabat@localhost:5432/mastodon"
+#
+# true, echo SQL statements
+sqlEchoEnable: false
+#
+# threshold to trigger case notation logic
+populationThreshold: 4
+#

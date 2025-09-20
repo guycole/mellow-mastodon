@@ -4,12 +4,7 @@
 # Development Environment: Ubuntu 22.04.5 LTS/python 3.10.12
 # Author: G.S. Cole (guycole at gmail dot com)
 #
-import datetime
-import json
-import os
-import shutil
 import sys
-import uuid
 
 import yaml
 from yaml.loader import SafeLoader
@@ -22,12 +17,14 @@ import postgres
 
 from sql_table import Equipment, LoadLog, Observation, Population, Site
 
+
 class CaseFix:
-    default_case_uuid = '10514480-5caf-4a41-98f2-a57eb24c2f9b'
-    
+    default_case_uuid = "10514480-5caf-4a41-98f2-a57eb24c2f9b"
+
     def __init__(self, configuration: dict[str, str]):
-        self.db_conn = configuration["dbConn"]
         self.case_dir = configuration["caseDir"]
+
+        self.db_conn = configuration["dbConn"]
         self.sql_echo = configuration["sqlEchoEnable"]
 
         connect_dict = {"options": "-csearch_path={}".format("mastodon_v1")}
@@ -49,17 +46,24 @@ class CaseFix:
             print(f"case {case_uuid} not found")
             return
         
+        site = self.postgres.site_select_by_name(case_card['obsSite'])
+        if site is None:
+            print(f"site {case_card['obsSite']} not found")
+            return
+
         # select population entry for each freq bin
-        for bin in case_card['freqBins']:
-         site_id = 1 # fix me
-         candidates = self.postgres.population_select_by_frequency_site_id(bin, site_id)
-         if len(candidates) != 1:
-                print(f"population entry not found for {bin} {site_id}")
+        for bin in case_card["freqBins"]:
+            candidates = self.postgres.population_select_by_frequency_site_id(
+                bin, site.id
+            )
+            if len(candidates) != 1:
+                print(f"population entry not found for {bin} {site}")
                 continue
-         
-         candidates[0].case_uuid = case_uuid
-         self.postgres.population_update(candidates[0])
-            
+
+            candidates[0].case_uuid = case_uuid
+            self.postgres.population_update(candidates[0])
+
+
 print("start casefix")
 
 #
@@ -67,8 +71,6 @@ print("start casefix")
 # argv[2] = configuration filename
 #
 if __name__ == "__main__":
-    print(len(sys.argv))
-
     case_uuid = sys.argv[1]
 
     if len(sys.argv) > 2:

@@ -7,8 +7,8 @@
 import datetime
 import json
 
-class PowerFileRow:
 
+class PowerFileRow:
     def __init__(self, raw_row: list[str]):
         # ['2025-05-16', ' 04:16:20', ' 966482608', ' 969275710', ' 2727.64']
         # "\tdate, time, Hz low, Hz high, Hz step, samples, dbm, dbm, ...
@@ -82,7 +82,7 @@ class PowerFileRow:
             "min_sample": min_sample,
             "max_sample": max_sample,
         }
-    
+
     def moving_window(self, half_window_size: int) -> list[tuple[int, float, float]]:
         float_list = []  # convert sample tuples into list of floats
         for row in self.samples_list:
@@ -103,8 +103,9 @@ class PowerFileRow:
 
             sample_value = float_list[ndx]
 
-            self.spectrum_list.append((self.samples_list[ndx][0], sample_value, local_mean))
-
+            self.spectrum_list.append(
+                (self.samples_list[ndx][0], sample_value, local_mean)
+            )
 
     def file_name(self, cooked_dir: str) -> str:
         return f"{cooked_dir}/{self.pfr_meta_map['time_stamp_epoch']}-{self.pfr_meta_map['freq_low_hz']}"
@@ -187,6 +188,7 @@ class PowerFileRow:
         else:
             # print("passed")
             return True
+
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***
