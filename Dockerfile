@@ -1,8 +1,8 @@
 #
-# mastodon collection processiong csv2json.py
+# mastodon collection processing csv2json.py
 #
-# docker build -t mastodon:1.0 .
-# docker run -d --rm -v /var/mellow:/var/mellow mastodon:1.0
+# docker build -t csv2json:1.0 .
+# docker run -d --rm -v /var/mellow:/var/mellow csv2json:1.0
 #
 FROM python:3.12-bookworm
 #
@@ -18,12 +18,12 @@ RUN mkdir -p /var/mellow
 #
 WORKDIR /mellow/mastodon
 #
-COPY src/csv2json.py .
-COPY src/power_file_epoch.py .
-COPY src/power_file_helper.py .
-COPY src/power_file_row.py .
-COPY src/power_file.py .
-COPY src/requirements.docker ./requirements.txt
+COPY src/collector/csv2json.py .
+COPY src/collector/power_file_epoch.py .
+COPY src/collector/power_file_helper.py .
+COPY src/collector/power_file_row.py .
+COPY src/collector/power_file.py .
+COPY src/collector/requirements.txt .
 #
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir -r requirements.txt
