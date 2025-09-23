@@ -1,11 +1,17 @@
 mellow-mastodon
 ===============
 
-Hello, [radio scanner](https://en.wikipedia.org/wiki/Radio_scanner) enthusiast.  Welcom to mellow-mastodon, an application which can handily operate on a [raspberry pi 4](https://en.wikipedia.org/wiki/Raspberry_Pi_4) using a [rtl-sdr](https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/) USB dongle at discover all the active frequencies near you.  
+Hello, [radio scanner](https://en.wikipedia.org/wiki/Radio_scanner) enthusiast.  Welcom to mellow-mastodon, an application which can handily operate on a [raspberry pi 4](https://en.wikipedia.org/wiki/Raspberry_Pi_4) using a [rtl-sdr](https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/) USB dongle at discover all the active radio frequencies near you.  
 
-Why would you need to discover active frequencies for yourself?  Spectrum usage changes frequently, published scanner guides are sometimes stale or the scanner websites are not well curated.  Using a tool like mellow-mastodon enables you to focus on frequencies that are active near you.  
+Why would you need to discover active radio frequencies for yourself?  Spectrum usage changes frequently, published scanner guides are grow stale or the scanner websites are not well curated.  Using a tool like mellow-mastodon enables you to focus on radio frequencies that are active and you can actually hear.  
 
 Some users might find the historical spectrum use interesting as well.  To capture history takes a more work to introduce a database.  I will start simple w/collection on a single rPi and then work up to multiple collectors writing to [AWS S3](https://en.wikipedia.org/wiki/Amazon_S3) and then loading into [PostgreSQL](https://www.postgresql.org/) for analysis.
+
+## Operation
+To use mellow mastodon in the simplest use case, you will need a a [Raspberry Pi](https://www.raspberrypi.org/) connected to a [rtl-sdr](https://osmocom.org/projects/rtl-sdr/wiki/rtl-sdr).
+
+After acquiring the hardware, you need the rtl_power(1) utility from the [rtl-sdr](https://github.com/osmocom/rtl-sdr) library.  I always build my rtl-sdr from scratch, but there is a debian package ("rtl-sdr") which might work for you.  When everything works, you can invoke "rtl_test -t" (need example).
+
 
 xxxxxxxxxxx
 
