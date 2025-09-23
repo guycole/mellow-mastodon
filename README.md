@@ -14,15 +14,19 @@ After acquiring the hardware, you need the rtl_power(1) utility from the [rtl-sd
 
 Create directories to hold the output, i.e. /var/mellow/mastodon/fresh
 
-At this point, you can invoke the rtl-power(1) utility.  The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) provides an example.  Note that big-search01 will write to /var/mellow/mastodon/fresh or update to suit your own environment.
+At this point, you can invoke the rtl-power(1) utility.  The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) provides an example.  Note that big-search01 will write to /var/mellow/mastodon/fresh or update the script to suit your own designs.
 
 big-search01 runs for 5 minutes and produces a comma separate values [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file suitable for import into a spreadsheet.  Here is [simple example](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) of a rtl-power(1) output file.  
 
 Here is another example of a sample energy plot w/a loud emitter at 169.55 MHz.
-![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png)
+![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png).  You can see there are other emitters in the plot (note the peaks on the left and right sides).  In this graph, frequency is the x axis and power is the y axis.
+
+rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a value (for the bin) based upon observed signal strength.  big-search01 writes the signal strength value every minute.  Note that even a very strong, but brief emitter might have a low value because the bin was not active the entire period.  Also note that bin frequency is not the actual frequency you would use on your scanner.  bin is a bucket, so a signal might span multiple buckets or be within a single bucket depending on the emitter.
+
+Another mechanism to discover stations is to use the csv2json.sh utility which reads CSV files and produces a JSON list of peakers which represent stations.  I prefer the output of csv2json because the files are more compact.  [Here](https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1758588787-anderson1.json) is a sample csv2json output file.
 
 xxxxxxxxxxx
-
+ A continues emitter, i.e. a NOAA weather station will have a high value in comparison to something like an aircraft control tower which operates intermittently.  
 
 There is not a GUI, I use this to run continuously 24x7 and look at the ou
 
