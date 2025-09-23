@@ -1,6 +1,16 @@
 mellow-mastodon
 ===============
 
+Hello, [radio scanner](https://en.wikipedia.org/wiki/Radio_scanner) enthusiast.  Welcom to mellow-mastodon, an application which can handily operate on a [raspberry pi 4](https://en.wikipedia.org/wiki/Raspberry_Pi_4) using a [rtl-sdr](https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/) USB dongle at discover all the active frequencies near you.  
+
+Why would you need to discover active frequencies for yourself?  Spectrum usage changes frequently, published scanner guides are sometimes stale or the scanner websites are not well curated.  Using a tool like mellow-mastodon enables you to focus on frequencies that are active near you.  
+
+Some users might find the historical spectrum use interesting as well.  To capture history takes a more work to introduce a database.  I will start simple w/collection on a single rPi and then work up to multiple collectors writing to [AWS S3](https://en.wikipedia.org/wiki/Amazon_S3) and then loading into [PostgreSQL](https://www.postgresql.org/) for analysis.
+
+xxxxxxxxxxx
+
+
+
 RF Energy Survey using the rtl_power(1) utility from the [rtl-sdr](https://github.com/osmocom/rtl-sdr) library.  
 
 rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a value (for the bin) based upon observed signal strength.  I redirect this to a file which is eventually loaded into [PostgreSQL](https://www.postgresql.org/) for analysis.
