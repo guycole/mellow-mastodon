@@ -53,6 +53,8 @@ class CaseFix:
 
         # select population entry for each freq bin
         for bin in case_card["freqBins"]:
+            print(f"update {bin}")
+
             candidates = self.postgres.population_select_by_frequency_site_id(
                 bin, site.id
             )

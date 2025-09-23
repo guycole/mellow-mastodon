@@ -55,8 +55,8 @@ class CaseDump:
             print(f"case {bin.case_uuid} read error")
             return
 
-        payload["obsFirstEpochTime"] = bin.obs_first.timestamp()
-        payload["obsLastEpochTime"] = bin.obs_last.timestamp()
+        payload["obsFirstEpochTime"] = int(bin.obs_first.timestamp())
+        payload["obsLastEpochTime"] = int(bin.obs_last.timestamp())
 
         helper.json_writer(payload)
 

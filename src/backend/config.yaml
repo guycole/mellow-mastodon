@@ -1,7 +1,8 @@
 #
 # case directory
 #caseDir: /var/mellow/mastodon/case
-caseDir: /home/gsc/Documents/github/mellow-mastodon/case
+#caseDir: /home/gsc/Documents/github/mellow-mastodon/case
+caseDir: /home/gsc/Documents/github/mellow-mastodon-cases/big-search01
 #
 # repository of problem files
 # failureDir: /var/mellow/mastodon/failure

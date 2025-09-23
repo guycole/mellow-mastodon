@@ -82,6 +82,7 @@ class JsonHelper:
 
     def json_reader(self, case_id: str) -> dict[str, any]:
         file_name = self.full_file_name(case_id)
+        print(f"read {file_name}")
 
         if os.path.isfile(file_name) is False:
             print(f"missing {file_name}")
