@@ -12,9 +12,19 @@ To use mellow mastodon in the simplest use case, you will need a a [Raspberry Pi
 
 After acquiring the hardware, you need the rtl_power(1) utility from the [rtl-sdr](https://github.com/osmocom/rtl-sdr) library.  I always build my rtl-sdr from scratch, but there is a debian package ("rtl-sdr") which might work for you.  When everything works, you can invoke "rtl_test -t" (need example).
 
+Create directories to hold the output, i.e. /var/mellow/mastodon/fresh
+
+At this point, you can invoke the rtl-power(1) utility.  The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) provides an example.  Note that big-search01 will write to /var/mellow/mastodon/fresh or update to suit your own environment.
+
+big-search01 runs for 5 minutes and produces a comma separate values [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file suitable for import into a spreadsheet.  Here is [simple example](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) of a rtl-power(1) output file.  
+
+Here is another example of a sample energy plot w/a loud emitter at 169.55 MHz.
+![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png)
 
 xxxxxxxxxxx
 
+
+There is not a GUI, I use this to run continuously 24x7 and look at the ou
 
 
 RF Energy Survey using the rtl_power(1) utility from the [rtl-sdr](https://github.com/osmocom/rtl-sdr) library.  
