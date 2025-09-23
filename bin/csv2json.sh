@@ -19,15 +19,21 @@ cd $HOME_DIR/mellow-mastodon/src/collector
 source venv/bin/activate
 time python3 ./csv2json.py
 #
-cd $WORK_DIR
-#
-# cleanup of json and gnuplot
-rm -rf ${COOKED_DIR}
-mkdir ${COOKED_DIR}
-#
-# cleanup of processed CSV files
-rm -rf ${PROCESSED_DIR}
-mkdir ${PROCESSED_DIR}
-#
+if [ $# -ne 0 ]; then
+  if [[ "$1" == "retain" ]]; then
+    echo "skipping directory delete"
+  else
+    cd $WORK_DIR
+
+    # cleanup of json and gnuplot
+    rm -rf ${COOKED_DIR}
+    mkdir ${COOKED_DIR}
+
+    # cleanup of processed CSV files
+    rm -rf ${PROCESSED_DIR}
+    mkdir ${PROCESSED_DIR}
+  fi
+fi
+ 
 echo "end csv2json"
 #

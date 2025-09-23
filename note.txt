@@ -2,4 +2,21 @@ raw csv to /tmp then fresh
 csv2json reads from fresh, copies csv to processed
   writes gnuplot, json to cooked
   writes peakers to peakers
-  
+
+case_fix.py 9416ba67-d5f6-431a-9ec6-b9e8d0560659
+rm 8433c89a-685e-4be8-8d7b-fec0251c9028.json
+rm 82870381-2f78-4c49-be18-f77798015aaa.json
+rm c44c71da-ef6f-4a42-bb3e-d3b93b26903c.json
+
+case_fix.py f17dcdd2-ef05-4d05-9de2-127618699483
+rm b406c0ab-39d6-4122-867a-923093cb2c51.json
+rm de5346a2-560a-43a9-af5a-80890c16e81e.json
+rm 4e6ab4df-e25e-415b-a747-e8fc9100d46f.json
+rm e6df8d4f-17d6-40e0-bf95-10f6be246826.json
+
+case_fix.py 8ab96bb8-97af-41c4-878e-3a5dbaed7340
+
+case_fix.py 57c84ad0-5804-4b76-98bb-aac1c1af96b6
+rm d324efb3-c272-4a0f-8f8e-341bf4f5ead9.json
+
+case_fix.py 28c9428f-0306-4c93-926a-b6f5ddf326d0
