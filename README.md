@@ -5,9 +5,9 @@ Hello, [radio scanner](https://en.wikipedia.org/wiki/Radio_scanner) enthusiast. 
 
 Why would you need to discover active radio frequencies for yourself?  Spectrum usage changes frequently, published scanner guides are grow stale or the scanner websites are not well curated.  Using a tool like mellow-mastodon enables you to focus on radio frequencies that are active and you can actually hear.  
 
-Some users might find the historical spectrum use interesting as well.  To capture history takes a more work to introduce a database.  I will start simple w/collection on a single rPi and then work up to multiple collectors writing to [AWS S3](https://en.wikipedia.org/wiki/Amazon_S3) and then loading into [PostgreSQL](https://www.postgresql.org/) for analysis.
+Some users might find the historical spectrum use interesting as well.  To capture history takes a more work to introduce a database.  I will start simple w/collection on a single rPi and then work up to multiple collectors writing to [AWS S3](https://en.wikipedia.org/wiki/Amazon_S3) and then loading into [PostgreSQL](https://www.postgresql.org/) for analysis.  Collecting samples over time allows discovery of frequencies in active use, which can be revisted with other applications for further analysis or simply logged for continuity.
 
-## Operation
+## Single Collector Operation
 To use mellow mastodon in the simplest use case, you will need a a [Raspberry Pi](https://www.raspberrypi.org/) connected to a [rtl-sdr](https://osmocom.org/projects/rtl-sdr/wiki/rtl-sdr).
 
 After acquiring the hardware, you need the rtl_power(1) utility from the [rtl-sdr](https://github.com/osmocom/rtl-sdr) library.  I always build my rtl-sdr from scratch, but there is a debian package ("rtl-sdr") which might work for you.  When everything works, you can invoke "rtl_test -t" (need example).
@@ -25,32 +25,13 @@ rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a valu
 
 Another mechanism to discover stations is to use the csv2json.sh utility which reads CSV files and produces a JSON list of peakers which represent stations.  I prefer the output of csv2json because the files are more compact.  [Here](https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1758588787-anderson1.json) is a sample csv2json output file.
 
-xxxxxxxxxxx
- A continues emitter, i.e. a NOAA weather station will have a high value in comparison to something like an aircraft control tower which operates intermittently.  
+Create directories to hold the csv2json output, i.e. /var/mellow/mastodon/processed, peaker, cooked.  csv2json can be configured via [config.yaml](https://github.com/guycole/mellow-mastodon/blob/main/src/collector/config.example).  The "cooked" direcctory will contain a json file which has all the rtl-power(1) values, and a gnuplot file in case you want to graph the output.  Use [gp_gen.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/gp_gen.sh) as an example with gnuplot(1).
 
-There is not a GUI, I use this to run continuously 24x7 and look at the ou
+## Multiple Collector Operation
 
+You can run multiple instances of mastodon collectors to feed a single back end.  By invoking from cron(1) the collection and load cycles can be automated.
 
-RF Energy Survey using the rtl_power(1) utility from the [rtl-sdr](https://github.com/osmocom/rtl-sdr) library.  
-
-rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a value (for the bin) based upon observed signal strength.  I redirect this to a file which is eventually loaded into [PostgreSQL](https://www.postgresql.org/) for analysis.
-
-Collecting samples over time allows discovery of frequencies in active use, which can be revisted with other applications for further analysis or simply logged for continuity.
-
-## Sample energy plot with emitter at 169.55 MHz
-![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png)
-
-## Deployment
-Deployment can be a single machine or multiple boxes.
-
-![deployment](https://github.com/guycole/mellow-mastodon/blob/main/md-uml/deployment.png)
-
-## Collection
-Collection devices consist of a [Raspberry Pi](https://www.raspberrypi.org/) connected to a [rtl-sdr](https://osmocom.org/projects/rtl-sdr/wiki/rtl-sdr).  The [rtl-power](https://github.com/osmocom/rtl-sdr) utility is employed to collect spectrum samples, see [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh).  The output file is too large to be easily transferred to 
-[AWS S3](https://en.wikipedia.org/wiki/Amazon_S3), so the results of rtl-power are filtered via [csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) which generates a json file of active bins (and then written to AWS S3).
-
-## Back End
-The database host reads collection files from AWS S3 and invokes [loader.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/loader.sh) to read csv2json files into PostgreSQL.
+See [wombat01-to-s3.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/wombat01-to-s3.sh) for an example of writing a file to AWS S3.  [fresh-from-s3.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/fresh-from-s3.sh) reads from S3 and [loader.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/loader.sh) reads the file into postgresql.
 
 ## Artifacts
 Samples of mastodon files
