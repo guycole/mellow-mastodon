@@ -78,17 +78,13 @@ Visit the [src/collector](https://github.com/guycole/mellow-mastodon/tree/main/s
 
 I run my collection via cron(8).  Here is an example [crontab(5)](https://github.com/guycole/mellow-mastodon/blob/main/bin/crontab.anderson)
 
+## Multiple Collector Operation w/a Database
 
+You can run multiple instances of mastodon collectors to feed a single back end.
 
+My solution has collectors write their peakers files to AWS S3 once per day.  See [wombat01-to-s3.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/wombat01-to-s3.sh) for an example of writing a file to AWS S3.
 
-Another mechanism to discover stations is to use 
-Create directories to hold the csv2json output, i.e. /var/mellow/mastodon/processed, peaker, cooked.  csv2json can be configured via [config.yaml](https://github.com/guycole/mellow-mastodon/blob/main/src/collector/config.example).  The "cooked" direcctory will contain a json file which has all the rtl-power(1) values, and a gnuplot file in case you want to graph the output.  Use [gp_gen.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/gp_gen.sh) as an example with gnuplot(1).
-
-## Multiple Collector Operation
-
-You can run multiple instances of mastodon collectors to feed a single back end.  By invoking from cron(1) the collection and load cycles can be automated.
-
-See [wombat01-to-s3.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/wombat01-to-s3.sh) for an example of writing a file to AWS S3.  [fresh-from-s3.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/fresh-from-s3.sh) reads from S3 and [loader.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/loader.sh) reads the file into postgresql.
+The backend system from S3 via [fresh-from-s3.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/fresh-from-s3.sh) and [loader.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/loader.sh) writes the peaker files into postgresql.
 
 ## Artifacts
 Samples of mastodon files
