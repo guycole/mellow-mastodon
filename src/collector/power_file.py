@@ -57,7 +57,12 @@ class PowerFile:
         # convert each csv row into PowerFileRow object, store in power_epoch_map
         power_epoch_map = {}
         for raw_row in raw_buffer:
-            pfr = PowerFileRow(raw_row)
+            try: 
+                pfr = PowerFileRow(raw_row)
+            except Exception as error:
+                print(error)
+                continue
+
             pfr.convert_samples()
             pfr.moving_window(self.pf_meta_map["half_window_size"])
 
