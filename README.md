@@ -46,19 +46,37 @@ To recap:
 1. rtl_power(1) produces a CSV file which you can read as a spreadsheet
 1. [csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) reads the [CSV file](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) and produces files usch as: 
 	1. a [JSON file](https://github.com/guycole/mellow-mastodon/blob/dox-review/test/1756357992-159936375.json) containing the raw CSV values for that row
-	1. a [gnuplot data file](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-162733800.gp) for the row
-	1. a consolidated [peakers file](https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1757201231-anderson1.json)
+	1. a [gnuplot data file](https://github.com/guycole/mellow-mastodon/blob/dox-review/test/1756357992-159936375.gp) for the row
+	1. a consolidated [peakers file](https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1758588787-anderson1.json)
 
 Using these output files, you are ready to verify using a regular scanner or another RTL-SDR based application.
 
 ## Single Collector Installation
 Create directories to hold the output, I consolidate these into "/var/mellow/mastodon" such as
-1. /var/mellow/mastodon/archive (xxx)
 1. /var/mellow/mastodon/cooked (output from csv2json.py)
 1. /var/mellow/mastodon/export (collected peaker files for AWS S3)
 1. /var/mellow/mastodon/fresh (CSV files collected from rtl_power to be parsed)
 1. /var/mellow/mastodon/peaker (json list of collected energy peaks)
 1. /var/mellow/mastodon/process (parsed CSV files from rtl_power)
+
+Install and test the RTL-SDR utilities as described above.
+
+Run big-search01.sh and verify that a fresh CSV file was created.
+
+Visit the [src/collector](https://github.com/guycole/mellow-mastodon/tree/main/src/collector) directory
+1. Create a [virtualenv](https://virtualenv.pypa.io/en/latest/) environment
+1. Activate virtualenv (i.e. ```source venv/bin/activate```)
+1. Run ```pip install -r requirements.txt```
+1. Deactivate virtualenv (i.e. ```deactivate```)
+1. Copy [config.example](https://github.com/guycole/mellow-mastodon/blob/main/src/collector/config.example) to config.yaml (i.e. ```cp config.example config.yaml```)
+1. Edit config.yaml to reflect your actual equipment and directories
+1. Verify that csv2json.py runs
+    1. ```python csv2json.py```
+	1. Discovers rtl_power(1) CSV file in fresh directory, parses it and moves it to processed directory.
+	1. Produces JSON and GP files in "cooked" directory
+	1. Produces peaker files in "peaker" directory
+
+I run my collection via cron(8).  Here is an example [crontab(5)](https://github.com/guycole/mellow-mastodon/blob/main/bin/crontab.anderson)
 
 
 
