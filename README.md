@@ -26,6 +26,29 @@ Sampling at 2048000 S/s.
 No E4000 tuner found, aborting.
 ```
 
+The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) provides an example of using thertl_power(1) to collect samples.  Note that big-search01 will write to /var/mellow/mastodon/fresh or update the script to suit your own designs.
+
+big-search01 runs for 5 minutes and produces a comma separate values [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file suitable for import into a spreadsheet.  Here is [simple example](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) of a rtl-power(1) output file.  
+
+Here is another example of a sample energy plot w/a loud emitter at 169.55 MHz.
+![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png).  You can see there are other emitters in the plot (note the peaks on the left and right sides).  In this graph, frequency is the x axis and power is the y axis.
+
+rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a value (for the bin) based upon observed signal strength.  big-search01 writes a energy value every minute.  Note that even a very strong, but brief emitter might have a low value because the bin was not active the entire period.  Also note that bin frequency is not the actual frequency you would use on your scanner.  bin is a bucket, so a signal might span multiple buckets or be within a single bucket depending on the emitter.
+
+Once you have a CSV file of energy observations, you can now look for active emitters.  One mechanism would be to read the CSV file into a spreadsheet application like [Google Sheets](https://docs.google.com/spreadsheets).  Another route is to use the [csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) application for discovery.
+
+[csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) is a utility which reads CSV files and produces a JSON list of peakers which represent stations.  I prefer the output of csv2json because the files are more compact compared to CSV output.  [Here](https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1758588787-anderson1.json) is a sample csv2json output file.
+
+To recap:
+1. rtl_power(1) utility samples spectrum, [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) is an example.
+1. rtl_power(1) produces a CSV file which you can read as a spreadsheet
+1. [csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) reads the CSV file and produces files usch as: 
+    1. a JSON file containing the raw CSV values for that row
+	1. a gnuplot data file from that row
+	1. a consolidated peaker file, which contains bins w/energy levels above a specified threshold
+
+Using these output files, you are ready to verify using a regular scanner or another RTL-SDR based application.
+
 ## Single Collector Installation
 Create directories to hold the output, I consolidate these into "/var/mellow/mastodon" such as
 1. /var/mellow/mastodon/archive (xxx)
@@ -36,17 +59,9 @@ Create directories to hold the output, I consolidate these into "/var/mellow/mas
 1. /var/mellow/mastodon/process (parsed CSV files from rtl_power)
 
 
-At this point, you can invoke the rtl-power(1) utility.  The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) provides an example.  Note that big-search01 will write to /var/mellow/mastodon/fresh or update the script to suit your own designs.
 
-big-search01 runs for 5 minutes and produces a comma separate values [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file suitable for import into a spreadsheet.  Here is [simple example](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) of a rtl-power(1) output file.  
 
-Here is another example of a sample energy plot w/a loud emitter at 169.55 MHz.
-![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png).  You can see there are other emitters in the plot (note the peaks on the left and right sides).  In this graph, frequency is the x axis and power is the y axis.
-
-rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a value (for the bin) based upon observed signal strength.  big-search01 writes the signal strength value every minute.  Note that even a very strong, but brief emitter might have a low value because the bin was not active the entire period.  Also note that bin frequency is not the actual frequency you would use on your scanner.  bin is a bucket, so a signal might span multiple buckets or be within a single bucket depending on the emitter.
-
-Another mechanism to discover stations is to use the csv2json.sh utility which reads CSV files and produces a JSON list of peakers which represent stations.  I prefer the output of csv2json because the files are more compact.  [Here](https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1758588787-anderson1.json) is a sample csv2json output file.
-
+Another mechanism to discover stations is to use 
 Create directories to hold the csv2json output, i.e. /var/mellow/mastodon/processed, peaker, cooked.  csv2json can be configured via [config.yaml](https://github.com/guycole/mellow-mastodon/blob/main/src/collector/config.example).  The "cooked" direcctory will contain a json file which has all the rtl-power(1) values, and a gnuplot file in case you want to graph the output.  Use [gp_gen.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/gp_gen.sh) as an example with gnuplot(1).
 
 ## Multiple Collector Operation
