@@ -28,10 +28,12 @@ No E4000 tuner found, aborting.
 
 The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) provides an example of using thertl_power(1) to collect samples.  Note that big-search01 will write to /var/mellow/mastodon/fresh or update the script to suit your own designs.
 
-big-search01 runs for 5 minutes and produces a comma separate values [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file suitable for import into a spreadsheet.  Here is [simple example](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) of a rtl-power(1) output file.  
+big-search01 runs for 5 minutes and produces a comma separated values [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file suitable for import into a spreadsheet.  Here is [simple example](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) of a rtl-power(1) output file.  
 
 Here is an example of a (one minute) sample energy plot w/a loud emitter at 169.55 MHz.
-![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png).  You can see there are other emitters in the plot (note the peaks on the left and right sides).  In this graph, frequency is the x axis and power is the y axis.  The plus symbols are the actual energy value and the line plot is a rolling mean of energy values.
+![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png).  
+
+You can see there are other emitters in the plot (note the peaks on the left and right sides).  In this graph, frequency is the x axis and power is the y axis.  The plus symbols are the actual energy value and the line plot is a rolling mean of energy values.
 
 rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a value (for the bin) based upon observed signal strength.  big-search01 writes a energy value every minute.  Note that even a very strong, but brief emitter might have a low value because the bin was not active the entire period.  Also note that bin frequency is not the actual frequency you would use on your scanner.  bin is a bucket, so a signal might span multiple buckets or be within a single bucket depending on the emitter.
 
