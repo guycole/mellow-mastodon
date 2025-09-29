@@ -1,9 +1,9 @@
 mellow-mastodon
 ===============
 
-Hello, [radio scanner](https://en.wikipedia.org/wiki/Radio_scanner) enthusiast.  Welcom to mellow-mastodon, an application which can handily operate on a [raspberry pi 4](https://en.wikipedia.org/wiki/Raspberry_Pi_4) using a [rtl-sdr](https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/) USB dongle at discover active radio frequencies near you.  
+Hello, [radio scanner](https://en.wikipedia.org/wiki/Radio_scanner) enthusiast.  Welcome to mellow-mastodon, an application which can handily operate on a [raspberry pi 4](https://en.wikipedia.org/wiki/Raspberry_Pi_4) using a [rtl-sdr](https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/) USB dongle at discover active radio frequencies near you.  
 
-Why would you need to discover active radio frequencies for yourself?  Spectrum usage changes frequently, published scanner guides are grow stale or the scanner websites are not well curated.  Using a tool like mellow-mastodon enables you to focus your attention on radio frequencies that are active and you can actually hear.  
+Why would you need to discover active radio frequencies for yourself?  Spectrum usage changes frequently, published scanner guides can grow stale or the scanner websites are not well curated.  Using a tool like mellow-mastodon enables you to focus your attention on radio frequencies that are active and you can actually receive.  
 
 Some users might find the historical spectrum use interesting as well.  Long term historical results require a database for storage and analysis.  You might also want the results from multiple collection sites.  More about these topics later.
 
@@ -30,8 +30,8 @@ The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/b
 
 big-search01 runs for 5 minutes and produces a comma separate values [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file suitable for import into a spreadsheet.  Here is [simple example](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) of a rtl-power(1) output file.  
 
-Here is another example of a sample energy plot w/a loud emitter at 169.55 MHz.
-![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png).  You can see there are other emitters in the plot (note the peaks on the left and right sides).  In this graph, frequency is the x axis and power is the y axis.
+Here is an example of a (one minute) sample energy plot w/a loud emitter at 169.55 MHz.
+![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png).  You can see there are other emitters in the plot (note the peaks on the left and right sides).  In this graph, frequency is the x axis and power is the y axis.  The plus symbols are the actual energy value and the line plot is a rolling mean of energy values.
 
 rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a value (for the bin) based upon observed signal strength.  big-search01 writes a energy value every minute.  Note that even a very strong, but brief emitter might have a low value because the bin was not active the entire period.  Also note that bin frequency is not the actual frequency you would use on your scanner.  bin is a bucket, so a signal might span multiple buckets or be within a single bucket depending on the emitter.
 
@@ -42,10 +42,10 @@ Once you have a CSV file of energy observations, you can now look for active emi
 To recap:
 1. rtl_power(1) utility samples spectrum, [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) is an example.
 1. rtl_power(1) produces a CSV file which you can read as a spreadsheet
-1. [csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) reads the CSV file and produces files usch as: 
-    1. a JSON file containing the raw CSV values for that row
-	1. a gnuplot data file from that row
-	1. a consolidated peaker file, which contains bins w/energy levels above a specified threshold
+1. [csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) reads the [CSV file](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) and produces files usch as: 
+	1. a [JSON file](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-162733800.json) containing the raw CSV values for that row
+	1. a [gnuplot data file](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-162733800.gp) for the row
+	1. a consolidated [peakers file](https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1757201231-anderson1.json)
 
 Using these output files, you are ready to verify using a regular scanner or another RTL-SDR based application.
 
