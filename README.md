@@ -9,6 +9,8 @@ Some users might find the historical spectrum use interesting as well.  Long ter
 
 I will start simple w/single collector on a single rPi and then work up to multiple collectors writing to [AWS S3](https://en.wikipedia.org/wiki/Amazon_S3) and then loading into [PostgreSQL](https://www.postgresql.org/) for analysis.  Collecting samples over time allows discovery of seasonal usage, which can be revisted with other applications for further analysis or simply logged for continuity.
 
+(note) I used 16GB uSD cards which are too small for this application.  Do yourself a favor and get 32GB or better.  The file sizes vary w/how busy your local RF environment is, but even in my quiet rural neighborhood 16GB is only good for a few days of samples.
+
 ## Single Collector Operation
 To use mellow mastodon in the simplest use case, you will need a a [Raspberry Pi](https://www.raspberrypi.org/) connected to a [rtl-sdr](https://osmocom.org/projects/rtl-sdr/wiki/rtl-sdr).
 
