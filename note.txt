@@ -20,3 +20,6 @@ case_fix.py 57c84ad0-5804-4b76-98bb-aac1c1af96b6
 rm d324efb3-c272-4a0f-8f8e-341bf4f5ead9.json
 
 case_fix.py 28c9428f-0306-4c93-926a-b6f5ddf326d0
+
+mkfs.ext4 -b 2048 /dev/sda1
+
