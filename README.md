@@ -31,15 +31,15 @@ The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/b
 big-search01 runs for 5 minutes and produces a comma separated values [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file suitable for import into a spreadsheet.  Here is [simple example](https://github.com/guycole/mellow-mastodon/blob/main/test/8e778934-5283-4d3e-9641-ccd8b33893c1.csv) of a rtl-power(1) output file.  
 
 Here is an example of a (one minute) sample energy plot w/a loud emitter at 169.55 MHz.
-![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png).  
+![sample plot](https://github.com/guycole/mellow-mastodon/blob/main/test/1757222705-168328650.png)  
 
-You can see there are other emitters in the plot (note the peaks on the left and right sides).  In this graph, frequency is the x axis and power is the y axis.  The plus symbols are the actual energy value and the line plot is a rolling mean of energy values.
+In this graph, frequency is the x axis and power is the y axis.  The plus symbols are the actual energy value and the line plot is a rolling mean of energy values You can see there are other minor emitters in the plot (note the peaks on the left and right sides). 
 
-rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a value (for the bin) based upon observed signal strength.  big-search01 writes a energy value every minute.  Note that even a very strong, but brief emitter might have a low value because the bin was not active the entire period.  Also note that bin frequency is not the actual frequency you would use on your scanner.  bin is a bucket, so a signal might span multiple buckets or be within a single bucket depending on the emitter.
+rtl_power(1) will scan a range of spectrum (sliced into bins) and produce a value (for the bin) based upon observed energy values and writes a value every minute.  Note that even a very strong, but brief emitter might have a low value because the bin was not active the entire period.  Also note that bin frequency is not the actual frequency you would use on your scanner.  bin is a bucket, so a signal might span multiple buckets or be within a single bucket depending on the emitter.
 
 Once you have a CSV file of energy observations, you can now look for active emitters.  One mechanism would be to read the CSV file into a spreadsheet application like [Google Sheets](https://docs.google.com/spreadsheets).  Another route is to use the [csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) application for discovery.
 
-[csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) is a utility which reads CSV files and produces a JSON list of peakers which represent stations.  I prefer the output of csv2json because the files are more compact compared to CSV output.  [Here](https://github.com/guycole/mellow-mastodon/blob/main/test/big-search01-1758588787-anderson1.json) is a sample csv2json output file.
+[csv2json.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/csv2json.sh) is a utility which reads CSV files and produces a JSON list of peakers which represent stations.  I prefer the output of csv2json because the files are more compact compared to CSV output.  [Here](https://github.com/guycole/mellow-mastodon/blob/main/test/1756357992-159936375.json) is a sample csv2json output file.
 
 To recap:
 1. rtl_power(1) utility samples spectrum, [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) is an example.
