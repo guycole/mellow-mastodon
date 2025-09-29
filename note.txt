@@ -22,4 +22,4 @@ rm d324efb3-c272-4a0f-8f8e-341bf4f5ead9.json
 case_fix.py 28c9428f-0306-4c93-926a-b6f5ddf326d0
 
 mkfs.ext4 -b 2048 /dev/sda1
-
+ln -s /mnt/sda/gsc/mellow/mastodon mastodon
