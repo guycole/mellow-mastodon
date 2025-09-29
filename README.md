@@ -1,18 +1,40 @@
 mellow-mastodon
 ===============
 
-Hello, [radio scanner](https://en.wikipedia.org/wiki/Radio_scanner) enthusiast.  Welcom to mellow-mastodon, an application which can handily operate on a [raspberry pi 4](https://en.wikipedia.org/wiki/Raspberry_Pi_4) using a [rtl-sdr](https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/) USB dongle at discover all the active radio frequencies near you.  
+Hello, [radio scanner](https://en.wikipedia.org/wiki/Radio_scanner) enthusiast.  Welcom to mellow-mastodon, an application which can handily operate on a [raspberry pi 4](https://en.wikipedia.org/wiki/Raspberry_Pi_4) using a [rtl-sdr](https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/) USB dongle at discover active radio frequencies near you.  
 
-Why would you need to discover active radio frequencies for yourself?  Spectrum usage changes frequently, published scanner guides are grow stale or the scanner websites are not well curated.  Using a tool like mellow-mastodon enables you to focus on radio frequencies that are active and you can actually hear.  
+Why would you need to discover active radio frequencies for yourself?  Spectrum usage changes frequently, published scanner guides are grow stale or the scanner websites are not well curated.  Using a tool like mellow-mastodon enables you to focus your attention on radio frequencies that are active and you can actually hear.  
 
-Some users might find the historical spectrum use interesting as well.  To capture history takes a more work to introduce a database.  I will start simple w/collection on a single rPi and then work up to multiple collectors writing to [AWS S3](https://en.wikipedia.org/wiki/Amazon_S3) and then loading into [PostgreSQL](https://www.postgresql.org/) for analysis.  Collecting samples over time allows discovery of frequencies in active use, which can be revisted with other applications for further analysis or simply logged for continuity.
+Some users might find the historical spectrum use interesting as well.  Long term historical results require a database for storage and analysis.  You might also want the results from multiple collection sites.  More about these topics later.
+
+I will start simple w/single collector on a single rPi and then work up to multiple collectors writing to [AWS S3](https://en.wikipedia.org/wiki/Amazon_S3) and then loading into [PostgreSQL](https://www.postgresql.org/) for analysis.  Collecting samples over time allows discovery of seasonal usage, which can be revisted with other applications for further analysis or simply logged for continuity.
 
 ## Single Collector Operation
 To use mellow mastodon in the simplest use case, you will need a a [Raspberry Pi](https://www.raspberrypi.org/) connected to a [rtl-sdr](https://osmocom.org/projects/rtl-sdr/wiki/rtl-sdr).
 
-After acquiring the hardware, you need the rtl_power(1) utility from the [rtl-sdr](https://github.com/osmocom/rtl-sdr) library.  I always build my rtl-sdr from scratch, but there is a debian package ("rtl-sdr") which might work for you.  When everything works, you can invoke "rtl_test -t" (need example).
+After acquiring the hardware, you need the rtl_power(1) utility from the [rtl-sdr](https://github.com/osmocom/rtl-sdr) library.  I always build my rtl-sdr from scratch, but there is a debian package ("rtl-sdr") which might work for you.  When everything works, you can invoke "rtl_test -t"
+```
+gsc@rpi4n:2012>rtl_test -t
+Found 1 device(s):
+  0:  Realtek, RTL2838UHIDIR, SN: 00000001
 
-Create directories to hold the output, i.e. /var/mellow/mastodon/fresh
+Using device 0: Generic RTL2832U OEM
+Found Rafael Micro R820T tuner
+Supported gain values (29): 0.0 0.9 1.4 2.7 3.7 7.7 8.7 12.5 14.4 15.7 16.6 19.7 20.7 22.9 25.4 28.0 29.7 32.8 33.8 36.4 37.2 38.6 40.2 42.1 43.4 43.9 44.5 48.0 49.6 
+[R82XX] PLL not locked!
+Sampling at 2048000 S/s.
+No E4000 tuner found, aborting.
+```
+
+## Single Collector Installation
+Create directories to hold the output, I consolidate these into "/var/mellow/mastodon" such as
+    1. /var/mellow/mastodon/archive (xxx)
+    1. /var/mellow/mastodon/cooked (output from csv2json.py)
+    1. /var/mellow/mastodon/export (collected peaker files for AWS S3)
+    1. /var/mellow/mastodon/fresh (CSV files collected from rtl_power to be parsed)
+    1. /var/mellow/mastodon/peaker (json list of collected energy peaks)
+    1. /var/mellow/mastodon/process (parsed CSV files from rtl_power)
+
 
 At this point, you can invoke the rtl-power(1) utility.  The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) provides an example.  Note that big-search01 will write to /var/mellow/mastodon/fresh or update the script to suit your own designs.
 
