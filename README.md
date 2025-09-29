@@ -28,18 +28,12 @@ No E4000 tuner found, aborting.
 
 ## Single Collector Installation
 Create directories to hold the output, I consolidate these into "/var/mellow/mastodon" such as
-
-    1. /var/mellow/mastodon/archive (xxx)
-
-    1. /var/mellow/mastodon/cooked (output from csv2json.py)
-
-    1. /var/mellow/mastodon/export (collected peaker files for AWS S3)
-
-    1. /var/mellow/mastodon/fresh (CSV files collected from rtl_power to be parsed)
-
-    1. /var/mellow/mastodon/peaker (json list of collected energy peaks)
-
-    1. /var/mellow/mastodon/process (parsed CSV files from rtl_power)
+1. /var/mellow/mastodon/archive (xxx)
+1. /var/mellow/mastodon/cooked (output from csv2json.py)
+1. /var/mellow/mastodon/export (collected peaker files for AWS S3)
+1. /var/mellow/mastodon/fresh (CSV files collected from rtl_power to be parsed)
+1. /var/mellow/mastodon/peaker (json list of collected energy peaks)
+1. /var/mellow/mastodon/process (parsed CSV files from rtl_power)
 
 
 At this point, you can invoke the rtl-power(1) utility.  The [big-search01.sh](https://github.com/guycole/mellow-mastodon/blob/main/bin/big-search01.sh) provides an example.  Note that big-search01 will write to /var/mellow/mastodon/fresh or update the script to suit your own designs.
