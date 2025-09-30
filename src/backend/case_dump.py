@@ -47,12 +47,13 @@ class CaseDump:
         payload = helper.fresh_population_to_json(bin, "big-search01", site)
         helper.json_writer(payload)
 
-    def update_existing_case(self, bin: Population) -> None:
+    def update_existing_case(self, bin: Population, site: Site) -> None:
         helper = json_helper.JsonHelper(self.case_dir)
 
         payload = helper.json_reader(bin.case_uuid)
         if len(payload) < 1:
             print(f"case {bin.case_uuid} read error")
+            self.create_fresh_case(bin, site)
             return
 
         payload["obsFirstEpochTime"] = int(bin.obs_first.timestamp())
@@ -70,7 +71,7 @@ class CaseDump:
         population_list = self.postgres.population_select_all_by_site(site.id)
         for bin in population_list:
             print(
-                f"bin population: {bin.population}, threshold: {self.population_threshold}"
+                f"bin population: {bin.case_uuid} {bin.population} threshold: {self.population_threshold}"
             )
             if bin.population < self.population_threshold:
                 below_threshold = below_threshold + 1
@@ -81,7 +82,7 @@ class CaseDump:
                 self.create_fresh_case(bin, site)
             else:
                 existing_case = existing_case + 1
-                self.update_existing_case(bin)
+                self.update_existing_case(bin, site)
 
         print(
             f"site {site.name} below {below_threshold} existing {existing_case} fresh {fresh_case}"
