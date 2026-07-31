@@ -6,6 +6,7 @@
 # Author: Guy Cole (guycole at gmail dot com)
 #
 PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
+PYTHONPATH="$HOME/github/mellow-mastodon-v1/src"; export PYTHONPATH
 #
 hostname=$(hostname)
 logger -p local3.info "mastodon big-search01 $hostname"
