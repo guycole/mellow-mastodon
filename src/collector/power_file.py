@@ -4,75 +4,56 @@
 # Development Environment: Ubuntu 22.04.5 LTS/python 3.10.12
 # Author: G.S. Cole (guycole at gmail dot com)
 #
-import json
+import logging
 
-from power_file_epoch import PowerFileEpoch
-from power_file_helper import PowerFileHelper
-from power_file_row import PowerFileRow
+import numpy as np
+import pandas as pd
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger("power_file")
 
 
 class PowerFile:
     def __init__(self, file_name: str):
         self.file_name = file_name
 
-#    def __str__(self):
-#        return f"PowerFile: {self.pf_meta_map['source_file']}"
+    def parser(self) -> dict[int, dict[int, list[tuple[int, float]]]]:
+        """Read rtl_power CSV and return {epoch: {freq_low_hz: [(freq_hz, dbm), ...]}}"""
 
-    def json_writer(
-        self,
-        epoch_time: int,
-        archive_dir: str,
-        peakers_list: list[tuple[int, float, float]],
-    ) -> None:
-        self.meta_map["epoch_time"] = epoch_time
+        df = pd.read_csv(self.file_name, header=None)
 
-        file_name = f"{archive_dir}/{self.meta_map['project']}-{self.meta_map['epoch_time']}-{self.meta_map['site']}.json"
+        timestamps = pd.to_datetime(
+            df[0].str.strip() + " " + df[1].str.strip(),
+            format="%Y-%m-%d %H:%M:%S",
+        )
+        epochs = (timestamps.astype(np.int64) // 10**9).values
 
-        self.json_meta_map = {
-            "antenna": self.meta_map["antenna"],
-            "peakerAlgorithm": self.meta_map["peaker_algorithm"],
-            "peakerThreshold": self.meta_map["peaker_threshold"],
-            "project": self.meta_map["project"],
-            "receiver": self.meta_map["receiver"],
-            "site": self.meta_map["site"],
-            "schemaVersion": 1,
-            "timeStampEpoch": epoch_time,
-        }
+        freq_lows = df[2].values.astype(np.int64)
+        freq_highs = df[3].values.astype(np.int64)
+        freq_steps = df[4].values.astype(float)
+        dbm_data = df.iloc[:, 6:].values.astype(float)
 
-        payload = {"meta": self.json_meta_map, "peakers": peakers_list}
+        power_epoch_map: dict[int, dict[int, list[tuple[int, float]]]] = {}
 
-        try:
-            with open(file_name, "w") as out_file:
-                json.dump(payload, out_file, indent=4)
-        except Exception as error:
-            print(error)
+        for i in range(len(epochs)):
+            epoch_key = int(epochs[i])
+            freq_low = int(freq_lows[i])
+            freq_step = float(freq_steps[i])
 
-    def parser(self) -> dict[int, PowerFileEpoch]:
-        """read csv file and convert each row"""
+            dbm_row = dbm_data[i]
+            dbm_values = dbm_row[~np.isnan(dbm_row)]
+            n = len(dbm_values)
 
-        # read all rows of csv file
-        helper = PowerFileHelper()
-        raw_buffer = helper.csv_file_reader(self.file_name)
+            freqs = (freq_low + np.arange(n) * freq_step).astype(np.int64)
 
-        # convert each csv row into PowerFileRow object, store in power_epoch_map
-        power_epoch_map = {}
-        for raw_row in raw_buffer:
-            try: 
-                pfr = PowerFileRow(raw_row)
-            except Exception as error:
-                print(error)
-                continue
+            if int(freqs[-1]) != int(freq_highs[i]):
+                logger.warning(f"frequency mismatch at row {i}: {freqs[-1]} != {freq_highs[i]}")
 
-            pfr.convert_samples()
+            samples = list(zip(freqs.tolist(), dbm_values.tolist()))
 
-            if pfr.validate_frequencies() is False:
-                raise Exception("frequency validation failed")
-
-            epoch_key = pfr.pfr_meta_map["time_stamp_epoch"]
             if epoch_key not in power_epoch_map:
-                power_epoch_map[epoch_key] = PowerFileEpoch(epoch_key)
-
-            power_epoch_map[epoch_key].add_sample(pfr)
+                power_epoch_map[epoch_key] = {}
+            power_epoch_map[epoch_key][freq_low] = samples
 
         return power_epoch_map
 
