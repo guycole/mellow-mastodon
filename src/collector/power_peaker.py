@@ -49,7 +49,7 @@ class PowerPeaker:
             )
 
             if values[ndx] > detection_threshold:
-                result.append((int(freqs[ndx]), float(values[ndx]), float(local_baseline)))
+                result.append([int(freqs[ndx]), float(values[ndx]), float(local_baseline)])
 
         return result
 
