@@ -6,6 +6,7 @@
 #
 import datetime
 import logging
+import os
 import sys
 import zoneinfo
 
@@ -43,6 +44,10 @@ class Collector:
 
         # convert from CSV to power_file_rows objects
         csv_file_name = f"/tmp/{base_file_name}.csv"
+        if not os.path.exists(csv_file_name):
+            logger.error(f"CSV file does not exist: {csv_file_name}")
+            return
+        
         pf = PowerFile(csv_file_name)
         power_epoch_map = pf.parser()
 
