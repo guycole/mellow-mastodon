@@ -1,5 +1,5 @@
 #
-# docker build --build-arg WOMBAT_UID=$(id -u wombat) --build-arg WOMBAT_GID=$(id -g wombat) -t mastodon:latest .
+# docker build --build-arg WOMBAT_UID=$(id -u wombat) --build-arg WOMBAT_GID=$(id -g wombat) -t mastodon:latest -f src/wombat_docker/Dockerfile src/
 # docker run -v /var/wombat:/mnt/wombat --name mastodon mastodon:latest
 # docker run -e stuntbox=validator -v /var/wombat:/mnt/wombat --name mastodon mastodon:latest
 # docker run -e stuntbox=scorer -e limit=5 --name mastodon mastodon:latest
@@ -35,14 +35,13 @@ ENV VIRTUAL_ENV=/app/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Copy requirements and install them inside the venv
-COPY requirements.txt ./
+COPY wombat_docker/requirements.txt ./
 RUN $VIRTUAL_ENV/bin/pip install --no-cache-dir -r requirements.txt
 
-COPY koala.py ./
-COPY mastodon_app.py ./
-COPY postgres.py ./
-COPY sql_table.py ./
-COPY validator.py ./
+COPY helper/ ./helper/
+COPY wombat_docker/mastodon_app.py ./
+COPY wombat_docker/koala.py ./
+COPY wombat_docker/validator.py ./
 
 RUN printf '%s\n' '#!/bin/sh' 'set -e' '/usr/local/bin/collect-wombat-ids.sh' 'set -a' '[ -f /app/wombat_env.env ] && . /app/wombat_env.env' 'set +a' 'exec "$@"' > /usr/local/bin/docker-entrypoint.sh \
 	&& chmod +x /usr/local/bin/docker-entrypoint.sh
