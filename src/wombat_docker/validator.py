@@ -106,7 +106,7 @@ class Validator:
         
         return False
 
-    def file_processor(self, file_name1: str, file_name2: str) -> None:
+    def file_processor2(self, file_name1: str, file_name2: str) -> None:
         logger.info(f"processing files: {file_name1} {file_name2}")
 
         if os.path.isfile(file_name1) is False:
@@ -147,8 +147,11 @@ class Validator:
         else:
             self.file_failure(file_name1, file_name2)
 
+    def file_processor(self, file_name1: str, file_name2: str) -> None:
+        logger.info(f"processing files: {file_name1} {file_name2}")
+
     def execute(self) -> None:
-        logger.info(f"fresh dir:{self.fresh_dir}")
+        logger.info(f"validator fresh dir:{self.fresh_dir}")
 
         os.chdir(self.fresh_dir)
         targets = sorted(os.listdir("."))
