@@ -19,7 +19,7 @@ class Base(DeclarativeBase):
     pass
 
 class DailyScore(Base):
-    __tablename__ = "heeler_daily_score"
+    __tablename__ = "mastodon_daily_score"
 
     id = Column(BigInteger, primary_key=True)
     crate_name = Column(String)
@@ -39,7 +39,7 @@ class DailyScore(Base):
         return f"daily_score({self.score_date} {self.host_name})"
 
 class GeoLoc(Base):
-    __tablename__ = "heeler_geo_loc"
+    __tablename__ = "mastodon_geo_loc"
 
     id = Column(BigInteger, primary_key=True)
     altitude = Column(Float)
@@ -65,7 +65,7 @@ class GeoLoc(Base):
         return f"geo_loc({self.site_name} {self.host_name})"
 
 class LoadLog(Base):
-    __tablename__ = "heeler_load_log"
+    __tablename__ = "mastodon_load_log"
 
     id = Column(BigInteger, primary_key=True)
     crate_name = Column(String)
@@ -75,8 +75,8 @@ class LoadLog(Base):
     host_name = Column(String)
     load_time = Column(DateTime)
     mode = Column(String)
-    obs_quantity = Column(SmallInteger)
     obs_time = Column(DateTime)
+    peaker_quantity = Column(SmallInteger)
     site_name = Column(String)
     task = Column(String)
 
@@ -88,8 +88,8 @@ class LoadLog(Base):
         self.host_name = args["host_name"]
         self.load_time = args.get("load_time", datetime.now())
         self.mode = args["mode"]
-        self.obs_quantity = args["obs_quantity"]
         self.obs_time = args["obs_time"]
+        self.peaker_quantity = args["peaker_quantity"]
         self.site_name = args["site_name"]
         self.task = args["task"]
 
@@ -99,7 +99,7 @@ class LoadLog(Base):
 class Observation(Base):
     """observation table definition"""
 
-    __tablename__ = "heeler_observation"
+    __tablename__ = "mastodon_observation"
 
     id = Column(BigInteger, primary_key=True)
     bssid = Column(String)
@@ -121,7 +121,7 @@ class Observation(Base):
 class Wap(Base):
     """wap table definition"""
 
-    __tablename__ = "heeler_wap"
+    __tablename__ = "mastodon_wap"
 
     id = Column(BigInteger, primary_key=True)
     bssid = Column(String)

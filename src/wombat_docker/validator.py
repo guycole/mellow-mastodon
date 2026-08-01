@@ -75,7 +75,7 @@ class Validator:
                     "task": self.jh.raw_json["job"]["task"],
                 }
 
-#                self.postgres.load_log_insert(load_log)
+                self.postgres.load_log_insert(load_log)
 
                 daily_score = {
                     "crate_name": self.jh.raw_json["crateName"],
