@@ -6,9 +6,7 @@
 #
 import logging
 import datetime
-import json
 import os
-import time
 
 from helper.json_helper import JsonHelper, schema
 
@@ -35,18 +33,18 @@ class Validator:
         logger.info(f"file failure:{file_name}")
 
         self.failure += 1
-#        os.rename(file_name, self.failure_dir + "/" + file_name)
+        os.rename(file_name, self.failure_dir + "/" + file_name)
 
-    def file_failure(self, file_name1: str, file_name2: str) -> None:
+    def file_failure2(self, file_name1: str, file_name2: str) -> None:
         self.file_failure1(file_name1)
         self.file_failure1(file_name2)
 
-    def file_success(self, file_name1: str, file_name2: str) -> None:
+    def file_success2(self, file_name1: str, file_name2: str) -> None:
         #logger.info(f"file success:{file_name1}, {file_name2}")
 
         self.success += 1
- #       os.rename(file_name1, self.success_dir + "/" + file_name1)
- #       os.rename(file_name2, self.success_dir + "/" + file_name2)
+        os.rename(file_name1, self.success_dir + "/" + file_name1)
+        os.rename(file_name2, self.success_dir + "/" + file_name2)
 
     def load_log_test(self, test_file_name: str) -> bool:
         logger.info(f"load_log_test for file: {test_file_name}")
@@ -105,41 +103,41 @@ class Validator:
 
         if os.path.isfile(file_name1) is False:
             logger.warning(f"skipping non-file:{file_name1}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
         if os.path.isfile(file_name2) is False:
             logger.warning(f"skipping non-file:{file_name2}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
         if os.path.getsize(file_name1) < 1 or os.path.getsize(file_name2) < 1:
             logger.warning(f"skipping empty file(s):{file_name1} {file_name2}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
         test_file_name = file_name1 if file_name1.endswith(".json") else file_name2
         if not self.jh.json_file_reader(test_file_name, True):
             logger.warning(f"file read failed for {test_file_name}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
         if self.jh.raw_json["fileName"] != test_file_name:
             logger.warning(f"mismatched file name: {self.jh.raw_json['fileName']} vs {test_file_name}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
         if self.jh.raw_json["version"] == 1 and self.jh.raw_json["job"]["project"].startswith("mastodon-v1"):
             pass
         else:
             logger.warning(f"invalid version or project for {test_file_name} {self.jh.raw_json['job']['project']}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
         if self.load_log_test(test_file_name):
-            self.file_success(file_name1, file_name2)
+            self.file_success2(file_name1, file_name2)
         else:
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
 
     def execute(self) -> None:
         logger.info(f"validator fresh dir:{self.fresh_dir}")
