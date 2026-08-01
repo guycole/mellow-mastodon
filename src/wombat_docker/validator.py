@@ -119,7 +119,7 @@ class Validator:
             return
 
         test_file_name = file_name1 if file_name1.endswith(".json") else file_name2
-        if not self.jh.json_file_reader(test_file_name):
+        if not self.jh.json_file_reader(test_file_name, True):
             logger.warning(f"file read failed for {test_file_name}")
             self.file_failure(file_name1, file_name2)
             return
