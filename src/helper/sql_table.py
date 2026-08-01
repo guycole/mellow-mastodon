@@ -25,14 +25,14 @@ class DailyScore(Base):
     crate_name = Column(String)
     file_quantity = Column(Integer)
     host_name = Column(String)
-    obs_quantity = Column(Integer)
+    peaker_quantity = Column(Integer)
     score_date = Column(Date)
 
     def __init__(self, args: dict[str, any]):
         self.crate_name = args["crate_name"]
         self.file_quantity = args["file_quantity"]
         self.host_name = args["host_name"]
-        self.obs_quantity = args["obs_quantity"]
+        self.peaker_quantity = args["peaker_quantity"]
         self.score_date = args["score_date"]
 
     def __repr__(self):

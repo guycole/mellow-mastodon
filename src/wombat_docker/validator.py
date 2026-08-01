@@ -85,7 +85,7 @@ class Validator:
                     "score_date": datetime.date.fromisoformat(self.jh.raw_json["timeStamp"]["iso8601"][:10]),
                 }
 
-#                self.postgres.daily_score_insert_or_update(daily_score)
+                self.postgres.daily_score_insert_or_update(daily_score)
 
                 if len(self.jh.raw_json["peakers"]) < 1:
                     logger.info("skipping file with no peakers")
