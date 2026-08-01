@@ -10,7 +10,9 @@ import json
 import os
 import time
 
-from postgres import PostGres
+from helper.json_helper import JsonHelper, schema
+
+from helper.postgres import PostGres
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger("validator")
@@ -26,6 +28,8 @@ class Validator:
 
         self.failure = 0
         self.success = 0
+
+        self.jh = JsonHelper()
 
     def file_failure1(self, file_name: str) -> None:
         logger.info(f"file failure:{file_name}")
