@@ -5,13 +5,12 @@
 # Author: G.S. Cole (guycole at gmail dot com)
 #
 import datetime
-import json
 import logging
+import os
 import sys
-import time
-from tracemalloc import start
-import uuid
 import zoneinfo
+
+from helper.json_helper import JsonHelper
 
 from power_peaker import PowerPeaker
 from power_file import PowerFile
@@ -40,18 +39,15 @@ class Collector:
         self.receiver_task = args["receiver"]["task"]
         self.receiver_type = args["receiver"]["type"]
 
-    def json_file_writer(self, file_name: str, json_data: dict[str, any]) -> None:
-        try:
-            with open(file_name, "w") as out_file:
-                json.dump(json_data, out_file, indent=4)
-        except Exception as error:
-            print(error)
-
     def execute(self, base_file_name: str, start_time: int) -> None:
         logger.info(f"collector execute: {base_file_name} {start_time}")
 
         # convert from CSV to power_file_rows objects
         csv_file_name = f"/tmp/{base_file_name}.csv"
+        if not os.path.exists(csv_file_name):
+            logger.error(f"CSV file does not exist: {csv_file_name}")
+            return
+        
         pf = PowerFile(csv_file_name)
         power_epoch_map = pf.parser()
 
@@ -92,19 +88,21 @@ class Collector:
         }
 
         outfile_json = f"{self.fresh_dir}/{base_file_name}.json"
-        self.json_file_writer(outfile_json, results)
+        JsonHelper().json_file_writer(outfile_json, results)
 
 #
-# argv[1] = configuration filename
+# argv[1] = base filename
+# argv[2] = start time
+# argv[3] = optional configuration filename
 #
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("usage: python3 collector.py <base_name> <time_stamp>")
+    if len(sys.argv) < 3:
+        print("usage: python3 collector.py <base_name> <time_stamp> [configuration_file]")
         sys.exit(1)
 
-    file_name = "config.yaml"
     base_name = sys.argv[1]
     start_time = int(sys.argv[2])
+    file_name = sys.argv[3] if len(sys.argv) > 3 else "config.yaml"
    
     with open(file_name, "r") as in_file:
         try:

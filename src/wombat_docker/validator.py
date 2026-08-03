@@ -6,11 +6,11 @@
 #
 import logging
 import datetime
-import json
 import os
-import time
 
-from postgres import PostGres
+from helper.json_helper import JsonHelper, schema
+
+from helper.postgres import PostGres
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger("validator")
@@ -27,32 +27,24 @@ class Validator:
         self.failure = 0
         self.success = 0
 
+        self.jh = JsonHelper()
+
     def file_failure1(self, file_name: str) -> None:
         logger.info(f"file failure:{file_name}")
 
         self.failure += 1
         os.rename(file_name, self.failure_dir + "/" + file_name)
 
-    def file_failure(self, file_name1: str, file_name2: str) -> None:
+    def file_failure2(self, file_name1: str, file_name2: str) -> None:
         self.file_failure1(file_name1)
         self.file_failure1(file_name2)
 
-    def file_success(self, file_name1: str, file_name2: str) -> None:
+    def file_success2(self, file_name1: str, file_name2: str) -> None:
         #logger.info(f"file success:{file_name1}, {file_name2}")
 
         self.success += 1
         os.rename(file_name1, self.success_dir + "/" + file_name1)
         os.rename(file_name2, self.success_dir + "/" + file_name2)
-
-    def file_reader(self, file_name: str) -> bool:
-        try:
-            with open(file_name, "r", encoding="utf-8") as in_file:
-                self.raw_buffer = json.load(in_file)
-        except Exception as error:
-            logger.error(f"file read failed for {file_name}: {error}")
-            return False
-
-        return True
 
     def load_log_test(self, test_file_name: str) -> bool:
         logger.info(f"load_log_test for file: {test_file_name}")
@@ -62,38 +54,38 @@ class Validator:
             if candidate is None:
                 logger.info(f"processing new file:{test_file_name}")
 
-                geo_loc = self.postgres.geo_loc_select_by_site(self.raw_buffer["geoLoc"]["siteName"])
+                geo_loc = self.postgres.geo_loc_select_by_site(self.jh.raw_json["geoLoc"]["siteName"])
                 if len(geo_loc) == 0:
-                    print("must insert geo_loc for site:", self.raw_buffer["geoLoc"]["siteName"])
+                    print("must insert geo_loc for site:", self.jh.raw_json["geoLoc"]["siteName"])
                     return False
-                
+
                 load_log = {
-                    "crate_name": self.raw_buffer["crateName"],
-                    "epoch_seconds": self.raw_buffer["timeStamp"]["epochSeconds"],
+                    "crate_name": self.jh.raw_json["crateName"],
+                    "epoch_seconds": self.jh.raw_json["timeStamp"]["epochSeconds"],
                     "file_name": test_file_name,
                     "geo_loc_id": geo_loc[0].id,
-                    "host_name": self.raw_buffer["equipment"]["hostName"],
+                    "host_name": self.jh.raw_json["equipment"]["hostName"],
                     "load_time": datetime.datetime.now(),
-                    "mode": self.raw_buffer["job"]["mode"],
-                    "obs_time": self.raw_buffer["timeStamp"]["iso8601"],
-                    "peaker_quantity": len(self.raw_buffer["peakers"]),
-                    "site_name": self.raw_buffer["geoLoc"]["siteName"],
-                    "task": self.raw_buffer["job"]["task"],
+                    "mode": self.jh.raw_json["job"]["mode"],
+                    "obs_time": self.jh.raw_json["timeStamp"]["iso8601"],
+                    "peaker_quantity": len(self.jh.raw_json["peakers"]),
+                    "site_name": self.jh.raw_json["geoLoc"]["siteName"],
+                    "task": self.jh.raw_json["job"]["task"],
                 }
 
                 self.postgres.load_log_insert(load_log)
 
                 daily_score = {
-                    "crate_name": self.raw_buffer["crateName"],
+                    "crate_name": self.jh.raw_json["crateName"],
                     "file_quantity": 1,
-                    "host_name": self.raw_buffer["equipment"]["hostName"],
-                    "peaker_quantity": len(self.raw_buffer["peakers"]),
-                    "score_date": datetime.date.fromisoformat(self.raw_buffer["timeStamp"]["iso8601"][:10]),
+                    "host_name": self.jh.raw_json["equipment"]["hostName"],
+                    "peaker_quantity": len(self.jh.raw_json["peakers"]),
+                    "score_date": datetime.date.fromisoformat(self.jh.raw_json["timeStamp"]["iso8601"][:10]),
                 }
 
                 self.postgres.daily_score_insert_or_update(daily_score)
 
-                if len(self.raw_buffer["peakers"]) < 1:
+                if len(self.jh.raw_json["peakers"]) < 1:
                     logger.info("skipping file with no peakers")
                     return False
 
@@ -111,44 +103,44 @@ class Validator:
 
         if os.path.isfile(file_name1) is False:
             logger.warning(f"skipping non-file:{file_name1}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
         if os.path.isfile(file_name2) is False:
             logger.warning(f"skipping non-file:{file_name2}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
         if os.path.getsize(file_name1) < 1 or os.path.getsize(file_name2) < 1:
             logger.warning(f"skipping empty file(s):{file_name1} {file_name2}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
         test_file_name = file_name1 if file_name1.endswith(".json") else file_name2
-        if not self.file_reader(test_file_name):
+        if not self.jh.json_file_reader(test_file_name, True):
             logger.warning(f"file read failed for {test_file_name}")
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
             return
 
-        try:
-            if self.raw_buffer["version"] == 1 and self.raw_buffer["job"]["project"].startswith("mastodon-v1"):
-                pass
-            else:
-                logger.warning(f"invalid version or project for {test_file_name} {self.raw_buffer['project']}")
-                self.file_failure(file_name1, file_name2)
-                return        
-        except Exception as error:
-            logger.error(f"project/version failure for {test_file_name}: {error}")
-            self.file_failure(file_name1, file_name2)
+        if self.jh.raw_json["fileName"] != test_file_name:
+            logger.warning(f"mismatched file name: {self.jh.raw_json['fileName']} vs {test_file_name}")
+            self.file_failure2(file_name1, file_name2)
+            return
+
+        if self.jh.raw_json["version"] == 1 and self.jh.raw_json["job"]["project"].startswith("mastodon-v1"):
+            pass
+        else:
+            logger.warning(f"invalid version or project for {test_file_name} {self.jh.raw_json['job']['project']}")
+            self.file_failure2(file_name1, file_name2)
             return
 
         if self.load_log_test(test_file_name):
-            self.file_success(file_name1, file_name2)
+            self.file_success2(file_name1, file_name2)
         else:
-            self.file_failure(file_name1, file_name2)
+            self.file_failure2(file_name1, file_name2)
 
     def execute(self) -> None:
-        logger.info(f"fresh dir:{self.fresh_dir}")
+        logger.info(f"validator fresh dir:{self.fresh_dir}")
 
         os.chdir(self.fresh_dir)
         targets = sorted(os.listdir("."))

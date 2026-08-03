@@ -5,7 +5,7 @@
 # Author: G.S. Cole (guycole at gmail dot com)
 #
 
-import statistics
+import numpy as np
 from typing import Any
 
 
@@ -20,56 +20,46 @@ class PowerPeaker:
         self.power_epoch_map = power_epoch_map
 
     def _bin_peakers(self, samples_list: list[tuple[int, float]]) -> list[tuple[int, float, float]]:
-        if len(samples_list) < 1:
+        if not samples_list:
             return []
 
-        float_list = [row[1] for row in samples_list]
-        row_baseline = statistics.median(float_list)
+        freqs = np.array([s[0] for s in samples_list], dtype=np.int64)
+        values = np.array([s[1] for s in samples_list])
+        n = len(values)
+        row_baseline = np.median(values)
         result = []
 
-        for ndx, sample in enumerate(samples_list):
-            left_start = max(0, ndx - self.HALF_WINDOW_SIZE)
-            left_stop = max(left_start, ndx - self.GUARD_WINDOW_SIZE)
-            right_start = min(len(float_list), ndx + self.GUARD_WINDOW_SIZE + 1)
-            right_stop = min(len(float_list), ndx + self.HALF_WINDOW_SIZE + 1)
+        half = self.HALF_WINDOW_SIZE
+        guard = self.GUARD_WINDOW_SIZE
 
-            training_bins = float_list[left_start:left_stop]
-            training_bins.extend(float_list[right_start:right_stop])
-            if len(training_bins) < 4:
-                training_bins = [value for sample_ndx, value in enumerate(float_list) if sample_ndx != ndx]
+        for ndx in range(n):
+            ls = max(0, ndx - half)
+            le = max(ls, ndx - guard)
+            rs = min(n, ndx + guard + 1)
+            re = min(n, ndx + half + 1)
+            training = np.concatenate([values[ls:le], values[rs:re]])
+            if len(training) < 4:
+                training = np.delete(values, ndx)
 
-            local_baseline = row_baseline
-            if len(training_bins) > 0:
-                local_baseline = statistics.median(training_bins)
-
-            deviations = [abs(value - local_baseline) for value in training_bins]
-            local_mad = 0.0
-            if len(deviations) > 0:
-                local_mad = statistics.median(deviations)
-
+            local_baseline = np.median(training) if len(training) else row_baseline
+            local_mad = np.median(np.abs(training - local_baseline)) if len(training) else 0.0
             local_sigma = max(1.4826 * local_mad, self.MINIMUM_SIGMA_DB)
             detection_threshold = local_baseline + max(
                 self.MINIMUM_DELTA_DB, self.SIGMA_MULTIPLIER * local_sigma
             )
 
-            sample_frequency = sample[0]
-            sample_value = sample[1]
-            if sample_value > detection_threshold:
-                result.append((sample_frequency, sample_value, local_baseline))
+            if values[ndx] > detection_threshold:
+                result.append([int(freqs[ndx]), float(values[ndx]), float(local_baseline)])
 
         return result
 
     def discover_peakers(self) -> list[tuple[int, float, float]]:
         discovered_map = {}
 
-        sorted_epochs = sorted(self.power_epoch_map.keys())
-        for epoch_key in sorted_epochs:
-            epoch = self.power_epoch_map[epoch_key]
-
-            sorted_rows = sorted(epoch.pfe_pfr_map.keys())
-            for row_key in sorted_rows:
-                pfr = epoch.pfe_pfr_map[row_key]
-                for peaker in self._bin_peakers(pfr.samples_list):
+        for epoch_key in sorted(self.power_epoch_map.keys()):
+            epoch_data = self.power_epoch_map[epoch_key]
+            for row_key in sorted(epoch_data.keys()):
+                for peaker in self._bin_peakers(epoch_data[row_key]):
                     sample_frequency = peaker[0]
                     if sample_frequency not in discovered_map:
                         discovered_map[sample_frequency] = peaker

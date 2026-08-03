@@ -4,13 +4,9 @@
 # Development Environment: Ubuntu 22.04.5 LTS/python 3.10.12
 # Author: G.S. Cole (guycole at gmail dot com)
 #
-import datetime
 import json
 import socket
 import sys
-import time
-import uuid
-import zoneinfo
 
 import yaml
 from yaml.loader import SafeLoader
@@ -57,6 +53,7 @@ class BootBoy:
         try:
             with open("config.yaml", "w") as f:
                 yaml.dump(yaml_config, f, default_flow_style=False)
+
             print("config.yaml generated successfully.")
         except Exception as e:
             print(f"Error writing config.yaml: {e}")
