@@ -1,37 +1,38 @@
 #!/bin/bash 
 #
 # Title: archiver.sh
-# Description: create daily archive file of collection results
+# Description: tar success directory and save in archive
 # Development Environment: Ubuntu 22.04.05 LTS
 # Author: Guy Cole (guycole at gmail dot com)
 #
 PATH=/bin:/usr/bin:/etc:/usr/local/bin:/opt/homebrew/bin/aws; export PATH
 #
-if [[ $# -eq 0 ]] ; then
-    echo "missing site argument"
-    exit 1
-fi
-#
+HOST_NAME=$(hostname)
 TODAY=$(date '+%Y-%m-%d')
-FILE_NAME="$1-${TODAY}.tgz"
+FILE_NAME="${HOST_NAME}-${TODAY}.tgz"
 #
+ARCHIVE_DIR="archive"
 EXPORT_DIR="export"
 PEAKER_DIR="peaker"
-WORK_DIR="/var/mellow/mastodon"
+SOURCE_DIR="mastodon-v1"
+SUCCESS_DIR="success"
+WORK_DIR="/var/wombat/mastodon"
 #
-echo "start archive for $FILE_NAME"
+echo "start archiver"
 #
 cd ${WORK_DIR}
-tar -cvzf ${FILE_NAME} ${PEAKER_DIR}
-mv ${FILE_NAME} ${EXPORT_DIR}
+#
+mv ${SUCCESS_DIR} ${SOURCE_DIR}
+mkdir ${SUCCESS_DIR}
+#
+# archive everything
+tar -cvzf "${ARCHIVE_DIR}/${FILE_NAME}" ${SOURCE_DIR}
+
+# export only json files
+tar -cvzf "${EXPORT_DIR}/${FILE_NAME}" ${SOURCE_DIR}/*.json
 #
 echo "cleanup"
-rm -rf ${PEAKER_DIR}
-mkdir ${PEAKER_DIR}
+rm -rf ${SOURCE_DIR}
 #
 echo "end archive"
-#
-# reboot daily because raspbian is unstable
-echo "reboot"
-sudo systemctl reboot
 #
