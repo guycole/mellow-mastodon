@@ -17,7 +17,7 @@ COPY peccary_docker/requirements.txt ./
 RUN $VIRTUAL_ENV/bin/pip install --no-cache-dir -r requirements.txt
 
 COPY helper/ ./helper/
-COPY peccary_docker/mastodon_app.py ./
+COPY peccary_docker/heeler_app.py ./
 COPY peccary_docker/loader.py ./
 
 RUN printf '%s\n' '#!/bin/sh' 'set -eu' \
@@ -35,4 +35,4 @@ ENV DB_CONN=postgresql+psycopg2://mastodon_client:batabat@host.docker.internal:5
 
 RUN mkdir -p /mnt/peccary
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["python", "mastodon_app.py"]
+CMD ["python", "heeler_app.py"]
