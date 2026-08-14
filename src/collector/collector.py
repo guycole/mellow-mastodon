@@ -50,9 +50,17 @@ class Collector:
         
         pf = PowerFile(csv_file_name)
         power_epoch_map = pf.parser()
-
         pp = PowerPeaker(power_epoch_map)
-        peakers_list = pp.discover_peakers()
+
+        if self.receiver_task.endswith("bs1-pk1"):
+            mode = "bigsearch01"
+            peakers_list = pp.discover_peakers()
+        elif self.receiver_task.endswith("wx1-pk1"):
+            mode = "noaa-wx01"
+            peakers_list = pp.discover_peakers()
+        else:
+            mode = "unknown"
+            peakers_list = pp.discover_peakers()
     
         dt_object_utc = datetime.datetime.fromtimestamp(
             start_time, tz=zoneinfo.ZoneInfo("UTC")
@@ -73,9 +81,9 @@ class Collector:
                 "siteName": self.site_name
             },
             "job": {
-                "mode": "bigsearch01",
+                "mode": mode,
                 "project": "mastodon-v1",
-                "task": "mastodon-v1-bs1",
+                "task": self.receiver_task
             },
             "timeStamp": {
                 "epochSeconds": start_time,
