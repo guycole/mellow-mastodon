@@ -10,7 +10,7 @@ PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
 hostname=$(hostname)
 logger -p local3.info "bootboy mastodon $hostname"
 #
-WORK_DIR="/home/wombat/github/mellow-mastodon-v1/src/collector"
+WORK_DIR="$HOME/github/mellow-mastodon-v1/src/collector"
 #
 echo "start bootboy"
 cd $WORK_DIR
