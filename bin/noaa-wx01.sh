@@ -1,4 +1,6 @@
 #!/bin/bash
+
+set -euo pipefail
 #
 # Title: noaa-wx01.sh
 # Description: test script for NOAA weather
@@ -18,6 +20,7 @@ DURATION=60s
 FREQ_LOW=162.400M
 FREQ_HIGH=162.550M
 REPORT=1s
+RTL_GAIN=${RTL_GAIN:-auto}
 #
 HOST_NAME=$(hostname)
 SCRIPT_NAME=$0
@@ -29,15 +32,15 @@ RTL_POWER="/usr/local/bin/rtl_power"
 POWER_FILE_NAME="${UUID}.csv"
 #
 # perform collection
-logger -p local3.info "mastodon big-search01 $HOST_NAME $SCRIPT_NAME $EPOCH_SECONDS $TODAY $UUID"
-time $RTL_POWER -g 40 -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION > /tmp/$POWER_FILE_NAME
+logger -p local3.info "mastodon noaa-wx01 $HOST_NAME $SCRIPT_NAME $EPOCH_SECONDS $TODAY $UUID"
+time $RTL_POWER -g $RTL_GAIN -f $FREQ_LOW:$FREQ_HIGH:$BIN_SIZE -i $REPORT -e $DURATION > /tmp/$POWER_FILE_NAME
 #
 # perform analysis
 WORK_DIR="$HOME/github/mellow-mastodon-v1/src/collector"
 #
-#cd $WORK_DIR
-#source venv/bin/activate
-#python3 ./collector.py ${UUID} ${EPOCH_SECONDS}
+cd $WORK_DIR
+source venv/bin/activate
+python3 ./collector.py "$UUID" "$EPOCH_SECONDS"
 #
-#mv /tmp/$POWER_FILE_NAME $FRESH_DIR/$POWER_FILE_NAME
+mv /tmp/$POWER_FILE_NAME $FRESH_DIR/$POWER_FILE_NAME
 #

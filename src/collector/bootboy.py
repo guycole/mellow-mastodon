@@ -13,7 +13,7 @@ from yaml.loader import SafeLoader
 
 class BootBoy:
 
-    def configuration(self, target: str) -> dict[str, any]:
+    def configuration(self, target: str) -> str:
         print(f"BootBoy: configuring {target}")
 
         # Build the path to the admin JSON file
@@ -59,16 +59,18 @@ class BootBoy:
             print(f"Error writing config.yaml: {e}")
             sys.exit(1)
 
-        return {
-            "receiver_task": receiver.get("task", "xxx"),
-        }
+        return receiver.get("task", "xxx")
 
-    def crontab(self) -> None:
+    def crontab(self, task:str) -> None:
         import subprocess
 
-        crontab_entry = (
-            "*/6 * * * * $HOME/github/mellow-mastodon-v1/bin/collector.sh > /dev/null 2>&1"
-        )
+        if task.endswith("bs1-pk1"):
+            crontab_entry = ("*/6 * * * * $HOME/github/mellow-mastodon-v1/bin/big-search01.sh > /dev/null 2>&1")
+        elif task.endswith("wx1-pk1"):
+            crontab_entry = ("*/2 * * * * $HOME/github/mellow-mastodon-v1/bin/noaa-wx01.sh > /dev/null 2>&1")
+        else:
+            print(f"Unknown task: {task}. No crontab entry will be created.")
+            return
 
         # Always overwrite — collector is dedicated to this workload and must have
         # exactly one cron entry.
@@ -85,8 +87,8 @@ class BootBoy:
             print(f"Error updating wombat's crontab: {e}")
 
     def execute(self, target: str) -> None:
-        config = self.configuration(target)
-        self.crontab()
+        task = self.configuration(target)
+        self.crontab(task)
 
 #
 #
