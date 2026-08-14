@@ -13,11 +13,11 @@ logger -p local3.info "mastodon big-search01 $hostname"
 #
 FRESH_DIR=/var/wombat/fresh/mastodon
 #
-BIN_SIZE=10k
+BIN_SIZE=2k
 DURATION=5m
 FREQ_LOW=117.975M
 FREQ_HIGH=960M
-REPORT=1m 
+REPORT=15s
 #
 HOST_NAME=$(hostname)
 SCRIPT_NAME=$0
