@@ -1,7 +1,7 @@
 #
 # Build from the src/ directory (one level above this file):
 # docker build -f peccary_docker/Dockerfile -t peccary:latest .
-# docker run -e WOMBAT_UID=<uid> -e WOMBAT_GID=<gid> -v /var/peccary:/mnt/peccary --name peccary peccary:latest
+# docker run -v /var/peccary:/mnt/peccary --name peccary peccary:latest
 #
 FROM python:3.11-slim
 
@@ -17,14 +17,8 @@ COPY peccary_docker/requirements.txt ./
 RUN $VIRTUAL_ENV/bin/pip install --no-cache-dir -r requirements.txt
 
 COPY helper/ ./helper/
-COPY peccary_docker/heeler_app.py ./
+COPY peccary_docker/mastodon_app.py ./
 COPY peccary_docker/loader.py ./
-
-RUN printf '%s\n' '#!/bin/sh' 'set -eu' \
-	': "${WOMBAT_UID:?WOMBAT_UID is required}"' \
-	': "${WOMBAT_GID:?WOMBAT_GID is required}"' \
-	'exec "$@"' > /usr/local/bin/docker-entrypoint.sh \
-	&& chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENV FAILURE_DIR=/mnt/peccary/mastodon/failure
 ENV FRESH_DIR=/mnt/peccary/mastodon/mastodon-v2
@@ -35,4 +29,4 @@ ENV DB_CONN=postgresql+psycopg2://mastodon_client:batabat@host.docker.internal:5
 
 RUN mkdir -p /mnt/peccary
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["python", "heeler_app.py"]
+CMD ["python", "mastodon_app.py"]
