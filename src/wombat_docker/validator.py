@@ -81,6 +81,7 @@ class Validator:
                     "host_name": self.jh.raw_json["equipment"]["hostName"],
                     "peaker_quantity": len(self.jh.raw_json["peakers"]),
                     "score_date": datetime.date.fromisoformat(self.jh.raw_json["timeStamp"]["iso8601"][:10]),
+                    "task": self.jh.raw_json["job"]["task"],
                 }
 
                 self.postgres.daily_score_insert_or_update(daily_score)

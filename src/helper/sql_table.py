@@ -27,6 +27,7 @@ class DailyScore(Base):
     host_name = Column(String)
     peaker_quantity = Column(Integer)
     score_date = Column(Date)
+    task = Column(String)
 
     def __init__(self, args: dict[str, any]):
         self.crate_name = args["crate_name"]
@@ -34,6 +35,7 @@ class DailyScore(Base):
         self.host_name = args["host_name"]
         self.peaker_quantity = args["peaker_quantity"]
         self.score_date = args["score_date"]
+        self.task = args["task"]
 
     def __repr__(self):
         return f"daily_score({self.score_date} {self.host_name})"
@@ -102,45 +104,37 @@ class Observation(Base):
     __tablename__ = "mastodon_observation"
 
     id = Column(BigInteger, primary_key=True)
-    bssid = Column(String)
+    baseline_dbm = Column(Float)
+    freq_hz = Column(Integer)
     load_log_id = Column(BigInteger)
-    obs_time = Column(DateTime)
-    signal_dbm = Column(SmallInteger)
-    wap_id = Column(BigInteger)
+    power_dbm = Column(Float)
 
     def __init__(self, args: dict[str, any]):
-        self.bssid = args["bssid"]
+        self.baseline_dbm = args["baseline_dbm"]
+        self.freq_hz = args["freq_hz"]
         self.load_log_id = args["load_log_id"]
-        self.obs_time = args["obs_time"]
-        self.signal_dbm = args["signal_dbm"]
-        self.wap_id = args["wap_id"]
+        self.power_dbm = args["power_dbm"]
 
     def __repr__(self):
-        return f"observation({self.wap_id} {self.load_log_id} {self.bssid})"
+        return f"observation({self.load_log_id} {self.freq_hz} {self.baseline_dbm} {self.power_dbm})"
 
-class Wap(Base):
-    """wap table definition"""
-
-    __tablename__ = "mastodon_wap"
+class PeakerScore(Base):
+    __tablename__ = "mastodon_peaker_score"
 
     id = Column(BigInteger, primary_key=True)
-    bssid = Column(String)
-    capability = Column(String)
-    cipher = Column(String)
-    frequency_mhz = Column(SmallInteger)
-    ssid = Column(String)
-    version = Column(Integer)
+    crate_name = Column(String)
+    freq_hz = Column(Integer)
+    peaker_quantity = Column(Integer)
+    task = Column(String)
 
     def __init__(self, args: dict[str, any]):
-        self.bssid = args["bssid"]
-        self.capability = args["capability"]
-        self.cipher = args["cipher"]
-        self.frequency_mhz = args["frequency_mhz"]
-        self.ssid = args["ssid"]
-        self.version = args["version"]
+        self.crate_name = args["crate_name"]
+        self.freq_hz = args["freq_hz"]
+        self.peaker_quantity = args["peaker_quantity"]
+        self.task = args["task"]
 
     def __repr__(self):
-        return f"wap({self.bssid} {self.version} {self.ssid})"
+        return f"peaker_score({self.freq_hz} {self.peaker_quantity})"
 
 # ;;; Local Variables: ***
 # ;;; mode:python ***

@@ -1,11 +1,11 @@
 #!/bin/bash
-
-set -euo pipefail
 #
 # Title: noaa-wx01.sh
 # Description: test script for NOAA weather
 # Development Environment: Ubuntu 22.04.05 LTS
 # Author: Guy Cole (guycole at gmail dot com)
+#
+set -euo pipefail
 #
 PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
 PYTHONPATH="$HOME/github/mellow-mastodon-v1/src"; export PYTHONPATH
