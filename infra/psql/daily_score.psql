@@ -5,8 +5,10 @@
 -- crate_name is crateName (from json)
 -- file_quantity is total daily files
 -- host_name is from equipment.hostName
+-- mode is bigsearch01
 -- obs_quantity is total daily observations
 -- score_date is summary date
+-- task is job task
 --
 create table mastodon_daily_score (
   id               bigserial    primary key,
@@ -14,10 +16,11 @@ create table mastodon_daily_score (
   file_quantity    integer      not null,
   host_name        varchar(16)  not null,
   peaker_quantity  integer      not null,
-  score_date       date         not null
+  score_date       date         not null,
+  task             varchar(32)  not null
 );
 
 grant select, insert, update, delete on mastodon_daily_score to mastodon_client;
 grant usage, select on sequence mastodon_daily_score_id_seq to mastodon_client;
 
-create unique index heeler_daily_score_ndx on mastodon_daily_score(crate_name, host_name, score_date);
+create unique index mastodon_daily_score_ndx on mastodon_daily_score(crate_name, host_name, score_date, task);

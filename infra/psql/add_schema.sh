@@ -13,6 +13,6 @@ export PGUSER=mastodon_admin
 psql < daily_score.psql
 psql < geo_loc.psql
 psql < load_log.psql
-#psql < population.psql
-#psql < observation.psql
+psql < peaker_score.psql
+psql < observation.psql
 #
