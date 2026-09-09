@@ -14,6 +14,6 @@ Verify mastodon collection
 
 2. Run the container:
 
-   docker run --rm mastodon
+   docker run --rm ghcr.io/guycole/wombat-mastodon:latest
 
 The app will log a message every 15 seconds.

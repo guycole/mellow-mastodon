@@ -7,11 +7,15 @@
 #
 PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
 #
+IMAGE="${IMAGE:-ghcr.io/guycole/wombat-mastodon:latest}"
+
 echo "start validate"
 #
-docker rm mastodon-validate;docker run -v /var/wombat:/mnt/wombat --name mastodon-validate mastodon:latest
+docker pull "${IMAGE}"
+docker rm mastodon-validate
+docker run -v /var/wombat:/mnt/wombat --name mastodon-validate "${IMAGE}"
 #
-#docker rm mastodon-koala;docker run -e stuntbox=koala -v /var/wombat:/mnt/wombat --name mastodon-koala mastodon:latest
+#docker rm mastodon-koala;docker run -e stuntbox=koala -v /var/wombat:/mnt/wombat --name mastodon-koala "${IMAGE}"
 #
 #$HOME/github/mellow-wombat/bin/mastodon-koala-import.sh
 #
