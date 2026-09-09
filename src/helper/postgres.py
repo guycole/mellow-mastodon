@@ -34,7 +34,21 @@ class PostGres:
     def __init__(self, session: sqlalchemy.orm.session.sessionmaker):
         self.Session = session
 
+    def _normalize_task(self, args: dict[str, any]) -> dict[str, any]:
+        candidate = dict(args)
+        task = candidate.get("task")
+        if isinstance(task, str):
+            task = task.strip()
+
+        if not task:
+            raise ValueError("task must be a non-empty string")
+
+        candidate["task"] = task
+
+        return candidate
+
     def daily_score_insert_or_update(self, args: dict[str, any]) -> DailyScore:
+        args = self._normalize_task(args)
         candidate = DailyScore(args)
 
         try:
@@ -42,8 +56,10 @@ class PostGres:
                 existing = session.scalars(
                     select(DailyScore).filter(
                         and_(
+                            DailyScore.crate_name == candidate.crate_name,
                             DailyScore.score_date == candidate.score_date,
                             DailyScore.host_name == candidate.host_name,
+                            DailyScore.task == candidate.task,
                         )
                     )
                 ).first()
@@ -67,6 +83,7 @@ class PostGres:
             return session.scalars(statement).all()
 
     def load_log_insert(self, args: dict[str, any]) -> LoadLog:
+        args = self._normalize_task(args)
         candidate = LoadLog(args)
 
         try:
@@ -111,6 +128,7 @@ class PostGres:
         return candidate
     
     def peaker_score_insert_or_update(self, args: dict[str, any]) -> PeakerScore:
+        args = self._normalize_task(args)
         candidate = PeakerScore(args)
 
         try:

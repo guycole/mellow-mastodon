@@ -5,13 +5,16 @@
 -- crate_name is crateName (from json)
 -- freq_hz is observed frequency in hertz
 -- peaker_quantity is total observations for peak
+-- service is emitter use like 'NOAAWX'
 -- task is job task
 --
 create table mastodon_peaker_score (
   id               bigserial    primary key,
+  case_notation    varchar(48)  default 'aee73c23-4eb7-416a-8ea5-21ce1eb29d33' not null,
   crate_name       varchar(32)  not null,
   freq_hz          int          not null,
   peaker_quantity  bigint       not null,
+  service          varchar(32)  default 'unknown' not null,
   task             varchar(32)  not null
 );
 

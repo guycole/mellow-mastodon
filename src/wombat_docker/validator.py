@@ -46,6 +46,16 @@ class Validator:
         os.rename(file_name1, self.success_dir + "/" + file_name1)
         os.rename(file_name2, self.success_dir + "/" + file_name2)
 
+    def _job_task(self) -> str:
+        task = self.jh.raw_json.get("job", {}).get("task")
+        if isinstance(task, str):
+            task = task.strip()
+
+        if task:
+            return task
+
+        raise ValueError("job.task must be a non-empty string")
+
     def load_log_test(self, test_file_name: str) -> bool:
         logger.info(f"load_log_test for file: {test_file_name}")
 
@@ -53,6 +63,7 @@ class Validator:
             candidate = self.postgres.load_log_select_by_file_name(test_file_name)
             if candidate is None:
                 logger.info(f"processing new file:{test_file_name}")
+                task = self._job_task()
 
                 geo_loc = self.postgres.geo_loc_select_by_site(self.jh.raw_json["geoLoc"]["siteName"])
                 if len(geo_loc) == 0:
@@ -70,7 +81,7 @@ class Validator:
                     "obs_time": self.jh.raw_json["timeStamp"]["iso8601"],
                     "peaker_quantity": len(self.jh.raw_json["peakers"]),
                     "site_name": self.jh.raw_json["geoLoc"]["siteName"],
-                    "task": self.jh.raw_json["job"]["task"],
+                    "task": task,
                 }
 
                 self.postgres.load_log_insert(load_log)
@@ -81,7 +92,7 @@ class Validator:
                     "host_name": self.jh.raw_json["equipment"]["hostName"],
                     "peaker_quantity": len(self.jh.raw_json["peakers"]),
                     "score_date": datetime.date.fromisoformat(self.jh.raw_json["timeStamp"]["iso8601"][:10]),
-                    "task": self.jh.raw_json["job"]["task"],
+                    "task": task,
                 }
 
                 self.postgres.daily_score_insert_or_update(daily_score)

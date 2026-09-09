@@ -44,7 +44,11 @@ schema = {
             "properties": {
                 "mode":    {"type": "string"},
                 "project": {"type": "string"},
-                "task":    {"type": "string"},
+                "task":    {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": ".*\\S.*"
+                },
             },
             "required": ["mode", "project", "task"],
             "additionalProperties": False
