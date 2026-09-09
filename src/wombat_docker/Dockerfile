@@ -1,10 +1,10 @@
 #
 # Build from the src/ directory (one level above this file):
 # docker build -f wombat_docker/Dockerfile -t wombat:latest .
-# docker run -e WOMBAT_UID=<uid> -e WOMBAT_GID=<gid> -v /var/wombat:/mnt/wombat --name wombat wombat:latest
-# docker run -e stuntbox=validator -e WOMBAT_UID=<uid> -e WOMBAT_GID=<gid> -v /var/wombat:/mnt/wombat --name wombat wombat:latest
-# docker run -e stuntbox=scorer -e WOMBAT_UID=<uid> -e WOMBAT_GID=<gid> -e limit=5 --name wombat wombat:latest
-# docker run -e stuntbox=scorer -e WOMBAT_UID=<uid> -e WOMBAT_GID=<gid> --name wombat wombat:latest
+# docker run -v /var/wombat:/mnt/wombat --name wombat wombat:latest
+# docker run -e stuntbox=validator -v /var/wombat:/mnt/wombat --name wombat wombat:latest
+# docker run -e stuntbox=scorer -e limit=5 --name wombat wombat:latest
+# docker run -e stuntbox=scorer --name wombat wombat:latest
 #
 FROM python:3.11-slim
 
@@ -32,5 +32,4 @@ ENV SUCCESS_DIR=/mnt/wombat/mastodon/success
 ENV DB_CONN=postgresql+psycopg2://mastodon_client:batabat@172.17.0.1:5432/mastodon
 
 RUN mkdir -p /mnt/wombat
-ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["python", "mastodon_app.py"]

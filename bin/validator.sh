@@ -5,17 +5,32 @@
 # Development Environment: Ubuntu 22.04.05 LTS
 # Author: Guy Cole (guycole at gmail dot com)
 #
+set -euo pipefail
+
 PATH=/bin:/usr/bin:/etc:/usr/local/bin; export PATH
 #
 IMAGE="${IMAGE:-ghcr.io/guycole/wombat-mastodon:latest}"
+PULL_IMAGE="${PULL_IMAGE:-0}"
 
 echo "start validate"
+echo "host arch: $(uname -m)"
+echo "image: ${IMAGE}"
 #
-docker pull "${IMAGE}"
-docker rm mastodon-validate
-docker run -v /var/wombat:/mnt/wombat --name mastodon-validate "${IMAGE}"
+if ! docker image inspect "${IMAGE}" >/dev/null 2>&1; then
+	echo "local image missing, pulling ${IMAGE}"
+	docker pull "${IMAGE}"
+elif [ "${PULL_IMAGE}" = "1" ]; then
+	echo "pull requested, updating ${IMAGE}"
+	docker pull "${IMAGE}"
+fi
+
+docker image inspect --format 'image id: {{.Id}} arch: {{.Architecture}}/{{.Os}}' "${IMAGE}"
+
+docker rm -f mastodon-validate >/dev/null 2>&1
+docker run -v /var/wombat:/mnt/wombat --name mastodon-validate --entrypoint python "${IMAGE}" mastodon_app.py
 #
-#docker rm mastodon-koala;docker run -e stuntbox=koala -v /var/wombat:/mnt/wombat --name mastodon-koala "${IMAGE}"
+#docker rm -f mastodon-koala >/dev/null 2>&1
+#docker run -e stuntbox=koala -v /var/wombat:/mnt/wombat --name mastodon-koala --entrypoint python "${IMAGE}" mastodon_app.py
 #
 #$HOME/github/mellow-wombat/bin/mastodon-koala-import.sh
 #

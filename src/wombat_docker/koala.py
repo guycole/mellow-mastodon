@@ -18,10 +18,6 @@ class Koala:
         self.koala_dir = os.environ.get("KOALA_DIR", "/var/wombat/mastodon/koala")
         self.success_dir = os.environ.get("SUCCESS_DIR", "/var/wombat/mastodon/success")
 
-        # UID/GID are provided by container entrypoint; default keeps local behavior.
-        self.wombat_uid = int(os.getenv("WOMBAT_UID", "1000"))
-        self.wombat_gid = int(os.getenv("WOMBAT_GID", "1000"))
-
     def file_reader(self, file_name: str) -> bool:
         try:
             with open(file_name, "r", encoding="utf-8") as in_file:
@@ -89,7 +85,6 @@ class Koala:
             full_file_name = f"{self.koala_dir}/{file_name}"
             logger.info(f"winner selected: {full_file_name}")
             self.file_writer(full_file_name, winner)
-            os.chown(full_file_name, self.wombat_uid, self.wombat_gid)
 
 if __name__ == "__main__":
     koala = Koala()
