@@ -24,12 +24,6 @@ COPY wombat_docker/mastodon_app.py ./
 COPY wombat_docker/koala.py ./
 COPY wombat_docker/validator.py ./
 
-RUN printf '%s\n' '#!/bin/sh' 'set -eu' \
-	': "${WOMBAT_UID:?WOMBAT_UID is required}"' \
-	': "${WOMBAT_GID:?WOMBAT_GID is required}"' \
-	'exec "$@"' > /usr/local/bin/docker-entrypoint.sh \
-	&& chmod +x /usr/local/bin/docker-entrypoint.sh
-
 ENV FAILURE_DIR=/mnt/wombat/failure
 ENV FRESH_DIR=/mnt/wombat/fresh/mastodon
 ENV KOALA_DIR=/mnt/wombat/mastodon/koala
